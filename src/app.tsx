@@ -1,12 +1,12 @@
 import Footer from '@/components/Footer';
-import { Question,SelectLang } from '@/components/RightContent';
+import { Question } from '@/components/RightContent';
 import { LinkOutlined } from '@ant-design/icons';
 import type { Settings as LayoutSettings } from '@ant-design/pro-components';
 import { SettingDrawer } from '@ant-design/pro-components';
 import type { RunTimeLayoutConfig } from '@umijs/max';
-import { history,Link } from '@umijs/max';
+import { history, Link } from '@umijs/max';
 import defaultSettings from '../config/defaultSettings';
-import { AvatarDropdown,AvatarName } from './components/RightContent/AvatarDropdown';
+import { AvatarDropdown, AvatarName } from './components/RightContent/AvatarDropdown';
 import { errorConfig } from './requestErrorConfig';
 import { getUserInfoUsingGET } from './services/ant-design-pro/userManagementAdmin';
 const isDev = process.env.NODE_ENV === 'development';
@@ -19,11 +19,14 @@ export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>;
   currentUser?: API.UserInfo;
   loading?: boolean;
+  permissionList?: API.PermissionItem[];
   fetchUserInfo?: () => Promise<API.UserInfo | undefined>;
 }> {
+  let permissionList: API.PermissionItem[] = [];
   const fetchUserInfo = async () => {
     try {
-      const res = await getUserInfoUsingGET()
+      const res = await getUserInfoUsingGET();
+      permissionList = res.data?.permissionList || [];
       return res.data?.info;
     } catch (error) {
       history.push(loginPath);
@@ -37,6 +40,7 @@ export async function getInitialState(): Promise<{
     return {
       fetchUserInfo,
       currentUser,
+      permissionList,
       settings: defaultSettings as Partial<LayoutSettings>,
     };
   }
@@ -49,7 +53,7 @@ export async function getInitialState(): Promise<{
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
   return {
-    actionsRender: () => [<Question key="doc" />, <SelectLang key="SelectLang" />],
+    actionsRender: () => [<Question key="doc" />],
     avatarProps: {
       src: initialState?.currentUser?.icon,
       title: <AvatarName />,
@@ -129,5 +133,5 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
  * @doc https://umijs.org/docs/max/request#配置
  */
 export const request = {
-  ...errorConfig
+  ...errorConfig,
 };
