@@ -1,15 +1,10 @@
 declare namespace API {
-  type deleteUsingPOSTParams = {
+  type deleteBrandUsingPOSTParams = {
     /** id */
     id: number;
   };
 
-  type getPermissionListUsingGETParams = {
-    /** adminId */
-    adminId: number;
-  };
-
-  type listUsingGETParams = {
+  type getBrandListUsingGETParams = {
     /** 是否为品牌制造商：0-不是 1-是 */
     factoryStatus?: number;
     /** 品牌名称 */
@@ -18,6 +13,11 @@ declare namespace API {
     pageNum?: number;
     /** 每页显示条数 */
     pageSize?: number;
+  };
+
+  type getPermissionListUsingGETParams = {
+    /** adminId */
+    adminId: number;
   };
 
   type PmsBrandAddParam = {

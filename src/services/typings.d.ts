@@ -2,7 +2,7 @@ declare namespace API {
   type CurrentUser = {
     permissionList: PermissionItem[];
     info: UserInfo;
-  }
+  };
   type PermissionItem = {
     id: number;
     pid: number;
@@ -14,7 +14,7 @@ declare namespace API {
     status: number;
     sort: number;
     createTime: string;
-  }
+  };
   type UserInfo = {
     id: number;
     username: string;
@@ -26,5 +26,19 @@ declare namespace API {
     createTime: string;
     loginTime: string;
     status: number;
-  }
+  };
+
+  type BrandListItem = {
+    id: number;
+    name: string;
+    firstLetter: string;
+    sort: number;
+    factoryStatus: number;
+    showStatus: number;
+    productCount: number;
+    productCommentCount: number;
+    logo: string;
+    bigPic: string;
+    brandStory: string | null;
+  };
 }
