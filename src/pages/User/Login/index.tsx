@@ -38,7 +38,7 @@ const Login: React.FC = () => {
       const msg = await loginUsingPOST({
         ...values,
       });
-      if (msg.status === 200) {
+      if (msg.success) {
         const defaultLoginSuccessMessage = '登录成功！';
         message.success(defaultLoginSuccessMessage);
         localStorage.setItem('token', msg.data?.token);

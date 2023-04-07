@@ -5,7 +5,6 @@ export default function access(
   initialState: { currentUser?: API.UserInfo; permissionList: API.PermissionItem[] } | undefined,
 ) {
   const { currentUser, permissionList } = initialState ?? {};
-  console.log(permissionList);
   return {
     canAdmin: currentUser?.username === 'super',
     // 商品管理的权限
@@ -14,5 +13,7 @@ export default function access(
     canBrand: permissionList?.find((item) => item.value === 'pms:brand:read'),
     // 新增品牌的权限
     canBrandCreate: permissionList?.find((item) => item.value === 'pms:brand:create'),
+    canBrandUpdate: permissionList?.find((item) => item.value === 'pms:brand:update'),
+    canBrandDelete: permissionList?.find((item) => item.value === 'pms:brand:delete'),
   };
 }

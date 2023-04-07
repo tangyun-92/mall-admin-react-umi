@@ -9,9 +9,9 @@ declare namespace API {
     name: string;
     value: string;
     icon: string;
-    type: number;
+    type: string;
     uri: string;
-    status: number;
+    status: string;
     sort: number;
     createTime: string;
   };
@@ -25,7 +25,7 @@ declare namespace API {
     note: string | null;
     createTime: string;
     loginTime: string;
-    status: number;
+    status: string;
   };
 
   type BrandListItem = {
@@ -33,12 +33,12 @@ declare namespace API {
     name: string;
     firstLetter: string;
     sort: number;
-    factoryStatus: number;
-    showStatus: number;
+    factoryStatus: string;
+    showStatus: string;
     productCount: number;
     productCommentCount: number;
     logo: string;
     bigPic: string;
-    brandStory: string | null;
+    brandStory: string | undefined;
   };
 }

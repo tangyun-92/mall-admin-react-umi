@@ -1,115 +1,130 @@
 // import { addRule, removeRule, rule, updateRule } from '@/services/ant-design-pro/api';
-import { getBrandListUsingGET } from '@/services/ant-design-pro/brandManagementAdmin';
-import { PlusOutlined } from '@ant-design/icons';
-import type { ActionType, ProColumns, ProDescriptionsItemProps } from '@ant-design/pro-components';
 import {
+  addBrandUsingPOST,
+  deleteBrandUsingPOST,
+  getBrandListUsingGET,
+  updateBrandUsingPOST,
+} from '@/services/ant-design-pro/brandManagementAdmin';
+import { PlusOutlined } from '@ant-design/icons';
+import {
+  ActionType,
   FooterToolbar,
-  ModalForm,
   PageContainer,
+  ProColumns,
   ProDescriptions,
-  ProFormText,
-  ProFormTextArea,
+  ProDescriptionsItemProps,
   ProTable,
 } from '@ant-design/pro-components';
 import '@umijs/max';
 import { useAccess } from '@umijs/max';
-import { Button, Drawer, Input, message } from 'antd';
+import { Button, Drawer, message } from 'antd';
 import React, { useRef, useState } from 'react';
-import type { FormValueType } from './components/UpdateForm';
-import UpdateForm from './components/UpdateForm';
+import MyForm from './components/MyForm';
 
-/**
- * @en-US Add node
- * @zh-CN 添加节点
- * @param fields
- */
-const handleAdd = async (fields: API.RuleListItem) => {
-  const hide = message.loading('正在添加');
-  try {
-    // await addRule({ ...fields });
-    hide();
-    message.success('Added successfully');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Adding failed, please try again!');
-    return false;
-  }
+// 是否品牌制造商枚举
+export const factoryStatusEnum = {
+  '1': {
+    text: '是',
+    status: 'Success',
+  },
+  '0': {
+    text: '不是',
+    status: 'Default',
+  },
+};
+export const showStatusEnum = {
+  '1': {
+    text: '显示',
+    status: 'Success',
+  },
+  '0': {
+    text: '不显示',
+    status: 'Default',
+  },
 };
 
-/**
- * @en-US Update node
- * @zh-CN 更新节点
- *
- * @param fields
- */
-const handleUpdate = async (fields: FormValueType) => {
-  const hide = message.loading('Configuring');
-  try {
-    // await updateRule({
-    //   name: fields.name,
-    //   desc: fields.desc,
-    //   key: fields.key,
-    // });
-    hide();
-    message.success('Configuration is successful');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Configuration failed, please try again!');
-    return false;
-  }
-};
-
-/**
- *  Delete node
- * @zh-CN 删除节点
- *
- * @param selectedRows
- */
-const handleRemove = async (selectedRows: API.RuleListItem[]) => {
-  const hide = message.loading('正在删除');
-  if (!selectedRows) return true;
-  try {
-    // await removeRule({
-    //   key: selectedRows.map((row) => row.key),
-    // });
-    hide();
-    message.success('Deleted successfully and will refresh soon');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Delete failed, please try again');
-    return false;
-  }
-};
 const TableList: React.FC = () => {
+  // 权限
   const access = useAccess();
-  /**
-   * @en-US Pop-up window of new window
-   * @zh-CN 新建窗口的弹窗
-   *  */
+  // 弹窗标题
+  const [modalTitle, setModalTitle] = useState<string>('');
+  // 新增与编辑的弹窗开关
   const [createModalOpen, handleModalOpen] = useState<boolean>(false);
-  /**
-   * @en-US The pop-up window of the distribution update window
-   * @zh-CN 分布更新窗口的弹窗
-   * */
+  const createFormRef = useRef<any>();
+  const updateFormRef = useRef<any>();
   const [updateModalOpen, handleUpdateModalOpen] = useState<boolean>(false);
+
+  // 详情抽屉开关
   const [showDetail, setShowDetail] = useState<boolean>(false);
+
   const actionRef = useRef<ActionType>();
-  const [currentRow, setCurrentRow] = useState<API.RuleListItem>();
-  const [selectedRowsState, setSelectedRows] = useState<API.RuleListItem[]>([]);
+  // 当前行
+  const [currentRow, setCurrentRow] = useState<API.BrandListItem>();
+  // 选中的行
+  const [selectedRowsState, setSelectedRows] = useState<API.BrandListItem[]>([]);
 
   /**
-   * @en-US International configuration
+   * @zh-CN 添加节点
+   * @param fields
+   */
+  const handleAdd = async (fields: API.BrandListItem) => {
+    const hide = message.loading('正在添加');
+    try {
+      await addBrandUsingPOST({ ...fields });
+      hide();
+      message.success('新增成功！');
+      return true;
+    } catch (error) {
+      hide();
+      return false;
+    }
+  };
+
+  /**
+   * @zh-CN 更新节点
+   * @param fields
+   */
+  const handleUpdate = async (fields: API.BrandListItem, id: number) => {
+    const hide = message.loading('Configuring');
+    try {
+      await updateBrandUsingPOST({ ...fields, id });
+      hide();
+      message.success('更新成功！');
+      return true;
+    } catch (error) {
+      hide();
+      return false;
+    }
+  };
+
+  /**
+   * @zh-CN 删除节点
+   * @param selectedRows
+   */
+  const handleRemove = async (selectedRows: API.BrandListItem[]) => {
+    const hide = message.loading('正在删除');
+    if (!selectedRows) return true;
+    try {
+      await deleteBrandUsingPOST({
+        ids: selectedRows.map((row) => row.id).join(',') as any,
+      });
+      hide();
+      message.success('删除成功！');
+      return true;
+    } catch (error) {
+      hide();
+      return false;
+    }
+  };
+
+  /**
    * @zh-CN 国际化配置
    * */
-
-  const columns: ProColumns<API.RuleListItem>[] = [
+  const columns: ProColumns<API.BrandListItem>[] = [
     {
-      title: '规则名称',
+      title: '品牌名称',
       dataIndex: 'name',
-      tip: 'The rule name is the unique key',
+      tip: '点击品牌名称可查看详情',
       render: (dom, entity) => {
         return (
           <a
@@ -124,73 +139,92 @@ const TableList: React.FC = () => {
       },
     },
     {
-      title: '描述',
-      dataIndex: 'desc',
+      title: '首字母',
+      dataIndex: 'firstLetter',
+      hideInSearch: true,
+    },
+    {
+      title: '品牌制造商',
+      dataIndex: 'factoryStatus',
+      valueType: 'select',
+      valueEnum: factoryStatusEnum,
+    },
+    {
+      title: '排序',
+      dataIndex: 'sort',
+      hideInSearch: true,
+    },
+    {
+      title: '产品数量',
+      dataIndex: 'productCount',
+      hideInSearch: true,
+      valueType: 'digit',
+    },
+    {
+      title: '产品评论数量',
+      dataIndex: 'productCommentCount',
+      hideInSearch: true,
+      valueType: 'digit',
+    },
+    {
+      title: '品牌logo',
+      dataIndex: 'logo',
+      hideInSearch: true,
+      valueType: 'image',
+    },
+    {
+      title: '专区大图',
+      dataIndex: 'bigPic',
+      hideInSearch: true,
+      valueType: 'image',
+    },
+    {
+      title: '品牌故事',
+      dataIndex: 'brandStory',
+      hideInSearch: true,
+      hideInTable: true,
       valueType: 'textarea',
     },
     {
-      title: '服务调用次数',
-      dataIndex: 'callNo',
-      sorter: true,
-      hideInForm: true,
-      renderText: (val: string) => `${val}${'万'}`,
-    },
-    {
-      title: '状态',
-      dataIndex: 'status',
-      hideInForm: true,
-      valueEnum: {
-        0: {
-          text: '关闭',
-          status: 'Default',
-        },
-        1: {
-          text: '运行中',
-          status: 'Processing',
-        },
-        2: {
-          text: '已上线',
-          status: 'Success',
-        },
-        3: {
-          text: '异常',
-          status: 'Error',
-        },
-      },
-    },
-    {
-      title: '上次调度时间',
-      sorter: true,
-      dataIndex: 'updatedAt',
-      valueType: 'dateTime',
-      renderFormItem: (item, { defaultRender, ...rest }, form) => {
-        const status = form.getFieldValue('status');
-        if (`${status}` === '0') {
-          return false;
-        }
-        if (`${status}` === '3') {
-          return <Input {...rest} placeholder={'请输入异常原因！'} />;
-        }
-        return defaultRender(item);
-      },
+      title: '显示状态',
+      dataIndex: 'showStatus',
+      hideInSearch: true,
+      valueType: 'select',
+      valueEnum: showStatusEnum,
     },
     {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
+      hideInDescriptions: true,
       render: (_, record) => [
-        <a
-          key="config"
-          onClick={() => {
-            handleUpdateModalOpen(true);
-            setCurrentRow(record);
-          }}
-        >
-          配置
-        </a>,
-        <a key="subscribeAlert" href="https://procomponents.ant.design/">
-          订阅警报
-        </a>,
+        access.canBrandUpdate ? (
+          <a
+            key="config"
+            onClick={() => {
+              handleUpdateModalOpen(true);
+              setCurrentRow(record);
+              setModalTitle('编辑品牌');
+            }}
+          >
+            编辑
+          </a>
+        ) : (
+          ''
+        ),
+        access.canBrandDelete ? (
+          <a
+            key="delete"
+            onClick={async () => {
+              await handleRemove([record]);
+              actionRef.current?.reloadAndRest?.();
+            }}
+          >
+            删除
+          </a>
+        ) : (
+          ''
+        ),
       ],
     },
   ];
@@ -210,6 +244,7 @@ const TableList: React.FC = () => {
               key="primary"
               onClick={() => {
                 handleModalOpen(true);
+                setModalTitle('新增品牌');
               }}
             >
               <PlusOutlined /> 新建
@@ -229,6 +264,9 @@ const TableList: React.FC = () => {
           };
         }}
         columns={columns}
+        pagination={{
+          pageSize: 10,
+        }}
         rowSelection={{
           onChange: (_, selectedRows) => {
             setSelectedRows(selectedRows);
@@ -247,32 +285,44 @@ const TableList: React.FC = () => {
               >
                 {selectedRowsState.length}
               </a>{' '}
-              项 &nbsp;&nbsp;
-              <span>
-                服务调用次数总计 {selectedRowsState.reduce((pre, item) => pre + item.callNo!, 0)} 万
-              </span>
+              项
             </div>
           }
         >
-          <Button
-            onClick={async () => {
-              await handleRemove(selectedRowsState);
-              setSelectedRows([]);
-              actionRef.current?.reloadAndRest?.();
-            }}
-          >
-            批量删除
-          </Button>
-          <Button type="primary">批量审批</Button>
+          {access.canBrandDelete ? (
+            <Button
+              type="primary"
+              danger
+              onClick={async () => {
+                await handleRemove(selectedRowsState);
+                setSelectedRows([]);
+                actionRef.current?.reloadAndRest?.();
+              }}
+            >
+              批量删除
+            </Button>
+          ) : (
+            ''
+          )}
         </FooterToolbar>
       )}
-      <ModalForm
-        title={'新建规则'}
-        width="400px"
-        open={createModalOpen}
-        onOpenChange={handleModalOpen}
-        onFinish={async (value) => {
-          const success = await handleAdd(value as API.RuleListItem);
+
+      {/* 新增 */}
+      <MyForm
+        modalTitle={modalTitle}
+        onOpenChange={(val) => {
+          handleModalOpen(val);
+          // 关闭时重置表单
+          if (!val) {
+            if (createFormRef.current) {
+              createFormRef.current?.resetFields();
+            }
+          }
+        }}
+        modalOpen={createModalOpen}
+        onRef={createFormRef}
+        onSubmit={async (values: API.BrandListItem) => {
+          const success = await handleAdd(values);
           if (success) {
             handleModalOpen(false);
             if (actionRef.current) {
@@ -280,40 +330,36 @@ const TableList: React.FC = () => {
             }
           }
         }}
-      >
-        <ProFormText
-          rules={[
-            {
-              required: true,
-              message: '规则名称为必填项',
-            },
-          ]}
-          width="md"
-          name="name"
-        />
-        <ProFormTextArea width="md" name="desc" />
-      </ModalForm>
-      <UpdateForm
-        onSubmit={async (value) => {
-          const success = await handleUpdate(value);
+      ></MyForm>
+
+      {/* 编辑 */}
+      <MyForm
+        modalTitle={modalTitle}
+        onOpenChange={(val) => {
+          handleUpdateModalOpen(val);
+          // 关闭时重置表单
+          if (!val) {
+            if (updateFormRef.current) {
+              updateFormRef.current?.resetFields();
+              setCurrentRow(undefined);
+            }
+          }
+        }}
+        modalOpen={updateModalOpen}
+        onRef={updateFormRef}
+        onSubmit={async (values: API.BrandListItem) => {
+          const success = await handleUpdate(values, currentRow?.id as number);
           if (success) {
             handleUpdateModalOpen(false);
-            setCurrentRow(undefined);
             if (actionRef.current) {
               actionRef.current.reload();
             }
           }
         }}
-        onCancel={() => {
-          handleUpdateModalOpen(false);
-          if (!showDetail) {
-            setCurrentRow(undefined);
-          }
-        }}
-        updateModalOpen={updateModalOpen}
-        values={currentRow || {}}
-      />
+        initialValues={currentRow}
+      ></MyForm>
 
+      {/* 详情 */}
       <Drawer
         width={600}
         open={showDetail}
@@ -324,8 +370,8 @@ const TableList: React.FC = () => {
         closable={false}
       >
         {currentRow?.name && (
-          <ProDescriptions<API.RuleListItem>
-            column={2}
+          <ProDescriptions<API.BrandListItem>
+            column={1}
             title={currentRow?.name}
             request={async () => ({
               data: currentRow || {},
@@ -333,7 +379,7 @@ const TableList: React.FC = () => {
             params={{
               id: currentRow?.name,
             }}
-            columns={columns as ProDescriptionsItemProps<API.RuleListItem>[]}
+            columns={columns as ProDescriptionsItemProps<API.BrandListItem>[]}
           />
         )}
       </Drawer>

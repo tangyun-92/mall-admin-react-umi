@@ -1,12 +1,12 @@
 declare namespace API {
   type deleteBrandUsingPOSTParams = {
-    /** id */
-    id: number;
+    /** ids */
+    ids: number[];
   };
 
   type getBrandListUsingGETParams = {
     /** 是否为品牌制造商：0-不是 1-是 */
-    factoryStatus?: number;
+    factoryStatus?: string;
     /** 品牌名称 */
     name?: string;
     /** 当前第几页 */
@@ -26,7 +26,7 @@ declare namespace API {
     /** 品牌故事 */
     brandStory?: string;
     /** 是否为品牌制造商：0-不是 1-是 */
-    factoryStatus: number;
+    factoryStatus: string;
     /** 首字母 */
     firstLetter: string;
     /** 品牌logo */
@@ -38,7 +38,7 @@ declare namespace API {
     /** 产品数量 */
     productCount?: number;
     /** 显示状态：0-不显示 1-显示 */
-    showStatus?: number;
+    showStatus?: string;
     /** 排序 */
     sort: number;
   };
@@ -49,7 +49,7 @@ declare namespace API {
     /** 品牌故事 */
     brandStory?: string;
     /** 是否为品牌制造商：0->不是；1->是 */
-    factoryStatus?: number;
+    factoryStatus?: string;
     /** 首字母 */
     firstLetter?: string;
     /** id */
@@ -63,7 +63,7 @@ declare namespace API {
     /** 产品数量 */
     productCount?: number;
     /** 显示状态：0-不显示 1-显示 */
-    showStatus?: number;
+    showStatus?: string;
     sort?: number;
   };
 
@@ -74,6 +74,7 @@ declare namespace API {
     msg?: string;
     /** 状态：200-成功 */
     status?: number;
+    success?: boolean;
   };
 
   type UmsAdminLoginParam = {
