@@ -87,7 +87,7 @@ const TableList: React.FC = () => {
   const handleUpdate = async (fields: API.BrandListItem, id: number) => {
     const hide = message.loading('Configuring');
     try {
-      await updateBrandUsingPOST({ ...fields, id });
+      await updateBrandUsingPOST({ ...fields, id, logo: updateFormRef.current.logo });
       hide();
       message.success('更新成功！');
       return true;

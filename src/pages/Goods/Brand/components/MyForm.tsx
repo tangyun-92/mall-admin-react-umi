@@ -1,12 +1,15 @@
+import { uploadUsingPOST } from '@/services/ant-design-pro/commonApi';
 import {
   ModalForm,
   ProForm,
   ProFormSelect,
   ProFormText,
   ProFormTextArea,
+  ProFormUploadButton,
   useDeepCompareEffect,
 } from '@ant-design/pro-components';
-import { useImperativeHandle } from 'react';
+import { UploadFile } from 'antd';
+import { useImperativeHandle, useState } from 'react';
 import { factoryStatusEnum, showStatusEnum } from '..';
 
 export type FormProps = {
@@ -20,6 +23,8 @@ export type FormProps = {
 
 const MyForm: React.FC<FormProps> = (props) => {
   const [form] = ProForm.useForm();
+  const [logoFileList, setLogoFileList] = useState<UploadFile[]>([]);
+  const [logo, setLogo] = useState<string>('');
 
   /**
    * 重置表单
@@ -32,6 +37,7 @@ const MyForm: React.FC<FormProps> = (props) => {
   useImperativeHandle(props.onRef, () => {
     return {
       resetFields,
+      logo,
     };
   });
 
@@ -39,8 +45,38 @@ const MyForm: React.FC<FormProps> = (props) => {
   useDeepCompareEffect(() => {
     if (props.initialValues) {
       form.setFieldsValue(props.initialValues);
+      if (props.initialValues?.logo) {
+        setLogoFileList([
+          {
+            uid: '',
+            name: '',
+            status: 'done',
+            url: props.initialValues?.logo,
+          },
+        ]);
+      }
     }
   }, [props.initialValues]);
+
+  /**
+   * 上传logo
+   * @param option
+   */
+  const uploadLogoFile = async (option: any) => {
+    const { file } = option;
+    const res = await uploadUsingPOST({}, file);
+    if (res.data) {
+      setLogoFileList([
+        {
+          uid: '',
+          name: '',
+          status: 'done',
+          url: res.data as any,
+        },
+      ]);
+      setLogo(res.data as any);
+    }
+  };
 
   return (
     <ModalForm
@@ -118,6 +154,27 @@ const MyForm: React.FC<FormProps> = (props) => {
         />
       </ProForm.Group>
       <ProFormTextArea name="brandStory" label="品牌故事" placeholder={'请输入'} />
+      <ProForm.Group>
+        <ProFormUploadButton
+          extra="支持扩展名：.png"
+          label="品牌logo"
+          name="file"
+          title="上传图片"
+          listType="picture-card"
+          fieldProps={{
+            headers: {
+              Authorization: 'Bearer ' + localStorage.getItem('token'),
+            },
+            customRequest: uploadLogoFile,
+            fileList: logoFileList,
+            maxCount: 1,
+            onRemove: () => {
+              setLogoFileList([]);
+              setLogo('');
+            },
+          }}
+        />
+      </ProForm.Group>
     </ModalForm>
   );
 };

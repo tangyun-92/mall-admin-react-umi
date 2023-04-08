@@ -3,7 +3,9 @@ import { defineConfig } from '@umijs/max';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 import routes from './routes';
+
 const { REACT_APP_ENV = 'dev' } = process.env;
+
 export default defineConfig({
   /**
    * @name 开启 hash 模式
@@ -144,4 +146,7 @@ export default defineConfig({
     strategy: 'normal',
   },
   requestRecord: {},
+  define: {
+    REACT_APP_API_URL: 'http://127.0.0.1:8081/',
+  },
 });
