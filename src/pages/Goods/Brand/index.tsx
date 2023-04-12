@@ -3,9 +3,9 @@ import {
   addBrandUsingPOST,
   deleteBrandUsingPOST,
   getBrandListUsingGET,
-  updateBrandUsingPOST,
-} from '@/services/ant-design-pro/brandManagementAdmin';
-import { PlusOutlined } from '@ant-design/icons';
+  updateBrandUsingPOST
+} from '@/services/ant-design-pro/brandManagementAdmin'
+import { PlusOutlined } from '@ant-design/icons'
 import {
   ActionType,
   FooterToolbar,
@@ -13,109 +13,109 @@ import {
   ProColumns,
   ProDescriptions,
   ProDescriptionsItemProps,
-  ProTable,
-} from '@ant-design/pro-components';
-import '@umijs/max';
-import { useAccess } from '@umijs/max';
-import { Button, Drawer, message } from 'antd';
-import React, { useRef, useState } from 'react';
-import MyForm from './components/MyForm';
+  ProTable
+} from '@ant-design/pro-components'
+import '@umijs/max'
+import { useAccess } from '@umijs/max'
+import { Button, Drawer, message } from 'antd'
+import React, { useRef, useState } from 'react'
+import MyForm from './components/MyForm'
 
 // 是否品牌制造商枚举
 export const factoryStatusEnum = {
   '1': {
     text: '是',
-    status: 'Success',
+    status: 'Success'
   },
   '0': {
     text: '不是',
-    status: 'Default',
-  },
-};
+    status: 'Default'
+  }
+}
 export const showStatusEnum = {
   '1': {
     text: '显示',
-    status: 'Success',
+    status: 'Success'
   },
   '0': {
     text: '不显示',
-    status: 'Default',
-  },
-};
+    status: 'Default'
+  }
+}
 
 const TableList: React.FC = () => {
   // 权限
-  const access = useAccess();
+  const access = useAccess()
   // 弹窗标题
-  const [modalTitle, setModalTitle] = useState<string>('');
+  const [modalTitle, setModalTitle] = useState<string>('')
   // 新增与编辑的弹窗开关
-  const [createModalOpen, handleModalOpen] = useState<boolean>(false);
-  const createFormRef = useRef<any>();
-  const updateFormRef = useRef<any>();
-  const [updateModalOpen, handleUpdateModalOpen] = useState<boolean>(false);
+  const [createModalOpen, handleModalOpen] = useState<boolean>(false)
+  const createFormRef = useRef<any>()
+  const updateFormRef = useRef<any>()
+  const [updateModalOpen, handleUpdateModalOpen] = useState<boolean>(false)
 
   // 详情抽屉开关
-  const [showDetail, setShowDetail] = useState<boolean>(false);
+  const [showDetail, setShowDetail] = useState<boolean>(false)
 
-  const actionRef = useRef<ActionType>();
+  const actionRef = useRef<ActionType>()
   // 当前行
-  const [currentRow, setCurrentRow] = useState<API.BrandListItem>();
+  const [currentRow, setCurrentRow] = useState<API.BrandListItem>()
   // 选中的行
-  const [selectedRowsState, setSelectedRows] = useState<API.BrandListItem[]>([]);
+  const [selectedRowsState, setSelectedRows] = useState<API.BrandListItem[]>([])
 
   /**
    * @zh-CN 添加节点
    * @param fields
    */
   const handleAdd = async (fields: API.BrandListItem) => {
-    const hide = message.loading('正在添加');
+    const hide = message.loading('正在添加')
     try {
-      await addBrandUsingPOST({ ...fields, logo: createFormRef.current.logo });
-      hide();
-      message.success('新增成功！');
-      return true;
+      await addBrandUsingPOST({ ...fields, logo: createFormRef.current.logo })
+      hide()
+      message.success('新增成功！')
+      return true
     } catch (error) {
-      hide();
-      return false;
+      hide()
+      return false
     }
-  };
+  }
 
   /**
    * @zh-CN 更新节点
    * @param fields
    */
   const handleUpdate = async (fields: API.BrandListItem, id: number) => {
-    const hide = message.loading('Configuring');
+    const hide = message.loading('Configuring')
     try {
-      await updateBrandUsingPOST({ ...fields, id, logo: updateFormRef.current.logo });
-      hide();
-      message.success('更新成功！');
-      return true;
+      await updateBrandUsingPOST({ ...fields, id, logo: updateFormRef.current.logo })
+      hide()
+      message.success('更新成功！')
+      return true
     } catch (error) {
-      hide();
-      return false;
+      hide()
+      return false
     }
-  };
+  }
 
   /**
    * @zh-CN 删除节点
    * @param selectedRows
    */
   const handleRemove = async (selectedRows: API.BrandListItem[]) => {
-    const hide = message.loading('正在删除');
-    if (!selectedRows) return true;
+    const hide = message.loading('正在删除')
+    if (!selectedRows) return true
     try {
       await deleteBrandUsingPOST({
-        ids: selectedRows.map((row) => row.id).join(',') as any,
-      });
-      hide();
-      message.success('删除成功！');
-      return true;
+        ids: selectedRows.map((row) => row.id).join(',') as any
+      })
+      hide()
+      message.success('删除成功！')
+      return true
     } catch (error) {
-      hide();
-      return false;
+      hide()
+      return false
     }
-  };
+  }
 
   /**
    * @zh-CN 国际化配置
@@ -129,68 +129,68 @@ const TableList: React.FC = () => {
         return (
           <a
             onClick={() => {
-              setCurrentRow(entity);
-              setShowDetail(true);
+              setCurrentRow(entity)
+              setShowDetail(true)
             }}
           >
             {dom}
           </a>
-        );
-      },
+        )
+      }
     },
     {
       title: '首字母',
       dataIndex: 'firstLetter',
-      hideInSearch: true,
+      hideInSearch: true
     },
     {
       title: '品牌制造商',
       dataIndex: 'factoryStatus',
       valueType: 'select',
-      valueEnum: factoryStatusEnum,
+      valueEnum: factoryStatusEnum
     },
     {
       title: '排序',
       dataIndex: 'sort',
-      hideInSearch: true,
+      hideInSearch: true
     },
     {
       title: '产品数量',
       dataIndex: 'productCount',
       hideInSearch: true,
-      valueType: 'digit',
+      valueType: 'digit'
     },
     {
       title: '产品评论数量',
       dataIndex: 'productCommentCount',
       hideInSearch: true,
-      valueType: 'digit',
+      valueType: 'digit'
     },
     {
       title: '品牌logo',
       dataIndex: 'logo',
       hideInSearch: true,
-      valueType: 'image',
+      valueType: 'image'
     },
     {
       title: '专区大图',
       dataIndex: 'bigPic',
       hideInSearch: true,
-      valueType: 'image',
+      valueType: 'image'
     },
     {
       title: '品牌故事',
       dataIndex: 'brandStory',
       hideInSearch: true,
       hideInTable: true,
-      valueType: 'textarea',
+      valueType: 'textarea'
     },
     {
       title: '显示状态',
       dataIndex: 'showStatus',
       hideInSearch: true,
       valueType: 'select',
-      valueEnum: showStatusEnum,
+      valueEnum: showStatusEnum
     },
     {
       title: '操作',
@@ -202,9 +202,9 @@ const TableList: React.FC = () => {
           <a
             key="config"
             onClick={() => {
-              handleUpdateModalOpen(true);
-              setCurrentRow(record);
-              setModalTitle('编辑品牌');
+              handleUpdateModalOpen(true)
+              setCurrentRow(record)
+              setModalTitle('编辑品牌')
             }}
           >
             编辑
@@ -216,18 +216,18 @@ const TableList: React.FC = () => {
           <a
             key="delete"
             onClick={async () => {
-              await handleRemove([record]);
-              actionRef.current?.reloadAndRest?.();
+              await handleRemove([record])
+              actionRef.current?.reloadAndRest?.()
             }}
           >
             删除
           </a>
         ) : (
           ''
-        ),
-      ],
-    },
-  ];
+        )
+      ]
+    }
+  ]
   return (
     <PageContainer>
       <ProTable<API.BrandListItem, API.getBrandListUsingGETParams>
@@ -235,7 +235,7 @@ const TableList: React.FC = () => {
         actionRef={actionRef}
         rowKey="id"
         search={{
-          labelWidth: 120,
+          labelWidth: 120
         }}
         toolBarRender={() => [
           access.canBrandCreate ? (
@@ -243,34 +243,34 @@ const TableList: React.FC = () => {
               type="primary"
               key="primary"
               onClick={() => {
-                handleModalOpen(true);
-                setModalTitle('新增品牌');
+                handleModalOpen(true)
+                setModalTitle('新增品牌')
               }}
             >
               <PlusOutlined /> 新建
             </Button>
           ) : (
             ''
-          ),
+          )
         ]}
         request={async (params: { pageSize?: number; current?: number }) => {
           const msg = await getBrandListUsingGET({
-            ...params,
-          });
+            ...params
+          })
           return {
             data: msg.data?.list,
             success: true,
-            total: msg.data?.total,
-          };
+            total: msg.data?.total
+          }
         }}
         columns={columns}
         pagination={{
-          pageSize: 10,
+          pageSize: 10
         }}
         rowSelection={{
           onChange: (_, selectedRows) => {
-            setSelectedRows(selectedRows);
-          },
+            setSelectedRows(selectedRows)
+          }
         }}
       />
       {selectedRowsState?.length > 0 && (
@@ -280,7 +280,7 @@ const TableList: React.FC = () => {
               已选择{' '}
               <a
                 style={{
-                  fontWeight: 600,
+                  fontWeight: 600
                 }}
               >
                 {selectedRowsState.length}
@@ -294,9 +294,9 @@ const TableList: React.FC = () => {
               type="primary"
               danger
               onClick={async () => {
-                await handleRemove(selectedRowsState);
-                setSelectedRows([]);
-                actionRef.current?.reloadAndRest?.();
+                await handleRemove(selectedRowsState)
+                setSelectedRows([])
+                actionRef.current?.reloadAndRest?.()
               }}
             >
               批量删除
@@ -311,22 +311,22 @@ const TableList: React.FC = () => {
       <MyForm
         modalTitle={modalTitle}
         onOpenChange={(val) => {
-          handleModalOpen(val);
+          handleModalOpen(val)
           // 关闭时重置表单
           if (!val) {
             if (createFormRef.current) {
-              createFormRef.current?.resetFields();
+              createFormRef.current?.resetFields()
             }
           }
         }}
         modalOpen={createModalOpen}
         onRef={createFormRef}
         onSubmit={async (values: API.BrandListItem) => {
-          const success = await handleAdd(values);
+          const success = await handleAdd(values)
           if (success) {
-            handleModalOpen(false);
+            handleModalOpen(false)
             if (actionRef.current) {
-              actionRef.current.reload();
+              actionRef.current.reload()
             }
           }
         }}
@@ -336,23 +336,23 @@ const TableList: React.FC = () => {
       <MyForm
         modalTitle={modalTitle}
         onOpenChange={(val) => {
-          handleUpdateModalOpen(val);
+          handleUpdateModalOpen(val)
           // 关闭时重置表单
           if (!val) {
             if (updateFormRef.current) {
-              updateFormRef.current?.resetFields();
-              setCurrentRow(undefined);
+              updateFormRef.current?.resetFields()
+              setCurrentRow(undefined)
             }
           }
         }}
         modalOpen={updateModalOpen}
         onRef={updateFormRef}
         onSubmit={async (values: API.BrandListItem) => {
-          const success = await handleUpdate(values, currentRow?.id as number);
+          const success = await handleUpdate(values, currentRow?.id as number)
           if (success) {
-            handleUpdateModalOpen(false);
+            handleUpdateModalOpen(false)
             if (actionRef.current) {
-              actionRef.current.reload();
+              actionRef.current.reload()
             }
           }
         }}
@@ -364,8 +364,8 @@ const TableList: React.FC = () => {
         width={600}
         open={showDetail}
         onClose={() => {
-          setCurrentRow(undefined);
-          setShowDetail(false);
+          setCurrentRow(undefined)
+          setShowDetail(false)
         }}
         closable={false}
       >
@@ -374,16 +374,16 @@ const TableList: React.FC = () => {
             column={1}
             title={currentRow?.name}
             request={async () => ({
-              data: currentRow || {},
+              data: currentRow || {}
             })}
             params={{
-              id: currentRow?.name,
+              id: currentRow?.name
             }}
             columns={columns as ProDescriptionsItemProps<API.BrandListItem>[]}
           />
         )}
       </Drawer>
     </PageContainer>
-  );
-};
-export default TableList;
+  )
+}
+export default TableList

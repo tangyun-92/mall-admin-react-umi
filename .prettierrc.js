@@ -1,6 +1,7 @@
 module.exports = {
   singleQuote: true,
-  trailingComma: 'all',
+  semi: false,
+  trailingComma: 'none',
   printWidth: 100,
   proseWrap: 'never',
   endOfLine: 'lf',
@@ -8,14 +9,14 @@ module.exports = {
     {
       files: '.prettierrc',
       options: {
-        parser: 'json',
-      },
+        parser: 'json'
+      }
     },
     {
       files: 'document.ejs',
       options: {
-        parser: 'html',
-      },
-    },
-  ],
-};
+        parser: 'html'
+      }
+    }
+  ]
+}
