@@ -1,4 +1,4 @@
-import { uploadUsingPOST } from '@/services/ant-design-pro/commonApi';
+import { uploadUsingPOST } from '@/services/ant-design-pro/commonApi'
 import {
   ModalForm,
   ProForm,
@@ -6,46 +6,46 @@ import {
   ProFormText,
   ProFormTextArea,
   ProFormUploadButton,
-  useDeepCompareEffect,
-} from '@ant-design/pro-components';
-import { message, UploadFile } from 'antd';
-import { useImperativeHandle, useState } from 'react';
-import { factoryStatusEnum, showStatusEnum } from '..';
+  useDeepCompareEffect
+} from '@ant-design/pro-components'
+import { message, UploadFile } from 'antd'
+import { useImperativeHandle, useState } from 'react'
+import { factoryStatusEnum, showStatusEnum } from '..'
 
 export type FormProps = {
-  onSubmit: (values: API.BrandListItem) => Promise<void>;
-  onOpenChange: (value: boolean) => void;
-  modalOpen: boolean;
-  initialValues?: Partial<API.BrandListItem>;
-  modalTitle: string;
-  onRef: React.MutableRefObject<any>;
-};
+  onSubmit: (values: API.BrandListItem) => Promise<void>
+  onOpenChange: (value: boolean) => void
+  modalOpen: boolean
+  initialValues?: Partial<API.BrandListItem>
+  modalTitle: string
+  onRef: React.MutableRefObject<any>
+}
 
 const MyForm: React.FC<FormProps> = (props) => {
-  const [form] = ProForm.useForm();
-  const [logoFileList, setLogoFileList] = useState<UploadFile[]>([]);
-  const [logo, setLogo] = useState<string>('');
+  const [form] = ProForm.useForm()
+  const [logoFileList, setLogoFileList] = useState<UploadFile[]>([])
+  const [logo, setLogo] = useState<string>('')
 
   /**
    * 重置表单
    */
   const resetFields = () => {
-    setLogoFileList([]);
-    form.resetFields();
-  };
+    setLogoFileList([])
+    form.resetFields()
+  }
 
   // 暴露一些方法供外部访问
   useImperativeHandle(props.onRef, () => {
     return {
       resetFields,
-      logo,
-    };
-  });
+      logo
+    }
+  })
 
   // 深度监听，如果初始值变化了，就重新设置表单值
   useDeepCompareEffect(() => {
     if (props.initialValues) {
-      form.setFieldsValue(props.initialValues);
+      form.setFieldsValue(props.initialValues)
       // setLogoFileList([]);
       if (props.initialValues?.logo) {
         setLogoFileList([
@@ -53,32 +53,32 @@ const MyForm: React.FC<FormProps> = (props) => {
             uid: '',
             name: '',
             status: 'done',
-            url: props.initialValues?.logo,
-          },
-        ]);
+            url: props.initialValues?.logo
+          }
+        ])
       }
     }
-  }, [props.initialValues]);
+  }, [props.initialValues])
 
   /**
    * 上传logo
    * @param option
    */
   const uploadLogoFile = async (option: any) => {
-    const { file } = option;
-    const res = await uploadUsingPOST({}, file);
+    const { file } = option
+    const res = await uploadUsingPOST({}, file)
     if (res.data) {
       setLogoFileList([
         {
           uid: '',
           name: '',
           status: 'done',
-          url: res.data as any,
-        },
-      ]);
-      setLogo(res.data as any);
+          url: res.data as any
+        }
+      ])
+      setLogo(res.data as any)
     }
-  };
+  }
 
   return (
     <ModalForm
@@ -89,7 +89,7 @@ const MyForm: React.FC<FormProps> = (props) => {
       onOpenChange={props.onOpenChange}
       onFinish={props.onSubmit}
       modalProps={{
-        forceRender: true,
+        forceRender: true
       }}
     >
       <ProForm.Group>
@@ -97,8 +97,8 @@ const MyForm: React.FC<FormProps> = (props) => {
           rules={[
             {
               required: true,
-              message: '必填项',
-            },
+              message: '必填项'
+            }
           ]}
           width="md"
           name="name"
@@ -109,8 +109,8 @@ const MyForm: React.FC<FormProps> = (props) => {
           rules={[
             {
               required: true,
-              message: '必填项',
-            },
+              message: '必填项'
+            }
           ]}
           width="md"
           name="firstLetter"
@@ -123,8 +123,8 @@ const MyForm: React.FC<FormProps> = (props) => {
           rules={[
             {
               required: true,
-              message: '必填项',
-            },
+              message: '必填项'
+            }
           ]}
           width="md"
           name="factoryStatus"
@@ -136,8 +136,8 @@ const MyForm: React.FC<FormProps> = (props) => {
           rules={[
             {
               required: true,
-              message: '必填项',
-            },
+              message: '必填项'
+            }
           ]}
           width="md"
           name="sort"
@@ -164,31 +164,29 @@ const MyForm: React.FC<FormProps> = (props) => {
           listType="picture-card"
           fieldProps={{
             headers: {
-              Authorization: 'Bearer ' + localStorage.getItem('token'),
+              Authorization: 'Bearer ' + localStorage.getItem('token')
             },
             customRequest: uploadLogoFile,
             fileList: logoFileList,
             maxCount: 1,
             onRemove: () => {
-              setLogoFileList([]);
-              setLogo('');
+              setLogoFileList([])
+              setLogo('')
             },
             accept: 'image/png,image/jpeg,image/jpg',
             beforeUpload: (file: any) => {
               const isJpgOrPng =
-                file.type === 'image/jpeg' ||
-                file.type === 'image/png' ||
-                file.type === 'image/jpg';
+                file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
               if (!isJpgOrPng) {
-                message.error('只能上传JPG/PNG/JPEG格式的图片!');
+                message.error('只能上传JPG/PNG/JPEG格式的图片!')
               }
-              return isJpgOrPng;
-            },
+              return isJpgOrPng
+            }
           }}
         />
       </ProForm.Group>
     </ModalForm>
-  );
-};
+  )
+}
 
-export default MyForm;
+export default MyForm

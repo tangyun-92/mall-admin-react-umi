@@ -14,7 +14,7 @@ export default [
   {
     path: '/user',
     layout: false,
-    routes: [{ name: '登录', path: '/user/login', component: './User/Login' }],
+    routes: [{ name: '登录', path: '/user/login', component: './User/Login' }]
   },
   { path: '/welcome', name: '欢迎', icon: 'smile', component: './Welcome' },
   {
@@ -23,10 +23,10 @@ export default [
     icon: 'crown',
     routes: [
       { path: '/goods', redirect: '/goods/brand', access: 'canBrand' },
-      { path: '/goods/brand', name: '品牌管理', component: './Goods/Brand', access: 'canBrand' },
-    ],
+      { path: '/goods/brand', name: '品牌管理', component: './Goods/Brand', access: 'canBrand' }
+    ]
   },
   { name: '查询表格', icon: 'table', path: '/list', component: './TableList' },
   { path: '/', redirect: '/welcome' },
-  { path: '*', layout: false, component: './404' },
-];
+  { path: '*', layout: false, component: './404' }
+]
