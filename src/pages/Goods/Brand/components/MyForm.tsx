@@ -8,7 +8,7 @@ import {
   ProFormUploadButton,
   useDeepCompareEffect,
 } from '@ant-design/pro-components';
-import { UploadFile } from 'antd';
+import { message, UploadFile } from 'antd';
 import { useImperativeHandle, useState } from 'react';
 import { factoryStatusEnum, showStatusEnum } from '..';
 
@@ -30,6 +30,7 @@ const MyForm: React.FC<FormProps> = (props) => {
    * 重置表单
    */
   const resetFields = () => {
+    setLogoFileList([]);
     form.resetFields();
   };
 
@@ -45,6 +46,7 @@ const MyForm: React.FC<FormProps> = (props) => {
   useDeepCompareEffect(() => {
     if (props.initialValues) {
       form.setFieldsValue(props.initialValues);
+      // setLogoFileList([]);
       if (props.initialValues?.logo) {
         setLogoFileList([
           {
@@ -156,9 +158,8 @@ const MyForm: React.FC<FormProps> = (props) => {
       <ProFormTextArea name="brandStory" label="品牌故事" placeholder={'请输入'} />
       <ProForm.Group>
         <ProFormUploadButton
-          extra="支持扩展名：.png"
+          extra="支持扩展名：.png .jpg .jpeg"
           label="品牌logo"
-          name="file"
           title="上传图片"
           listType="picture-card"
           fieldProps={{
@@ -171,6 +172,17 @@ const MyForm: React.FC<FormProps> = (props) => {
             onRemove: () => {
               setLogoFileList([]);
               setLogo('');
+            },
+            accept: 'image/png,image/jpeg,image/jpg',
+            beforeUpload: (file: any) => {
+              const isJpgOrPng =
+                file.type === 'image/jpeg' ||
+                file.type === 'image/png' ||
+                file.type === 'image/jpg';
+              if (!isJpgOrPng) {
+                message.error('只能上传JPG/PNG/JPEG格式的图片!');
+              }
+              return isJpgOrPng;
             },
           }}
         />

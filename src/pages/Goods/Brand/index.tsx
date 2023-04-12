@@ -70,7 +70,7 @@ const TableList: React.FC = () => {
   const handleAdd = async (fields: API.BrandListItem) => {
     const hide = message.loading('正在添加');
     try {
-      await addBrandUsingPOST({ ...fields });
+      await addBrandUsingPOST({ ...fields, logo: createFormRef.current.logo });
       hide();
       message.success('新增成功！');
       return true;
