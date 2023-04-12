@@ -23,11 +23,14 @@ const Login: React.FC = () => {
   });
   const fetchUserInfo = async () => {
     const userInfo = await initialState?.fetchUserInfo?.();
+    const currentUser = userInfo?.info;
+    const permissionList = userInfo?.permissionList;
     if (userInfo) {
       flushSync(() => {
         setInitialState((s) => ({
           ...s,
-          currentUser: userInfo,
+          currentUser,
+          permissionList,
         }));
       });
     }

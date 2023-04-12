@@ -22,7 +22,7 @@ export default [
     name: '商品',
     icon: 'crown',
     routes: [
-      { path: '/goods', redirect: '/goods/brand' },
+      { path: '/goods', redirect: '/goods/brand', access: 'canBrand' },
       { path: '/goods/brand', name: '品牌管理', component: './Goods/Brand', access: 'canBrand' },
     ],
   },

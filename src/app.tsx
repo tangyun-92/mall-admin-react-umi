@@ -20,14 +20,12 @@ export async function getInitialState(): Promise<{
   currentUser?: API.UserInfo;
   loading?: boolean;
   permissionList?: API.PermissionItem[];
-  fetchUserInfo?: () => Promise<API.UserInfo | undefined>;
+  fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
 }> {
-  let permissionList: API.PermissionItem[] = [];
   const fetchUserInfo = async () => {
     try {
       const res = await getUserInfoUsingGET();
-      permissionList = res.data?.permissionList || [];
-      return res.data?.info;
+      return res.data as Promise<API.CurrentUser | undefined>;
     } catch (error) {
       history.push(loginPath);
     }
@@ -36,7 +34,9 @@ export async function getInitialState(): Promise<{
   // 如果不是登录页面，执行
   const { location } = history;
   if (location.pathname !== loginPath) {
-    const currentUser = await fetchUserInfo();
+    const userInfo = await fetchUserInfo();
+    const currentUser = userInfo?.info;
+    const permissionList = userInfo?.permissionList;
     return {
       fetchUserInfo,
       currentUser,
