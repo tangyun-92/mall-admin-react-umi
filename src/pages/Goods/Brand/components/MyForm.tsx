@@ -23,14 +23,19 @@ export type FormProps = {
 
 const MyForm: React.FC<FormProps> = (props) => {
   const [form] = ProForm.useForm()
+  // logo
   const [logoFileList, setLogoFileList] = useState<UploadFile[]>([])
   const [logo, setLogo] = useState<string>('')
+  // 专区大图
+  const [bigPicFileList, setBigPicFileList] = useState<UploadFile[]>([])
+  const [bigPic, setBigPic] = useState<string>('')
 
   /**
    * 重置表单
    */
   const resetFields = () => {
     setLogoFileList([])
+    setBigPicFileList([])
     form.resetFields()
   }
 
@@ -38,7 +43,8 @@ const MyForm: React.FC<FormProps> = (props) => {
   useImperativeHandle(props.onRef, () => {
     return {
       resetFields,
-      logo
+      logo,
+      bigPic
     }
   })
 
@@ -46,7 +52,6 @@ const MyForm: React.FC<FormProps> = (props) => {
   useDeepCompareEffect(() => {
     if (props.initialValues) {
       form.setFieldsValue(props.initialValues)
-      // setLogoFileList([]);
       if (props.initialValues?.logo) {
         setLogoFileList([
           {
@@ -56,6 +61,18 @@ const MyForm: React.FC<FormProps> = (props) => {
             url: props.initialValues?.logo
           }
         ])
+        setLogo(props.initialValues?.logo)
+      }
+      if (props.initialValues?.bigPic) {
+        setBigPicFileList([
+          {
+            uid: '',
+            name: '',
+            status: 'done',
+            url: props.initialValues?.bigPic
+          }
+        ])
+        setBigPic(props.initialValues?.bigPic)
       }
     }
   }, [props.initialValues])
@@ -77,6 +94,26 @@ const MyForm: React.FC<FormProps> = (props) => {
         }
       ])
       setLogo(res.data as any)
+    }
+  }
+
+  /**
+   * 上传专区大图
+   * @param option
+   */
+  async function uploadBigPicFile(option: any) {
+    const { file } = option
+    const res = await uploadUsingPOST({}, file)
+    if (res.data) {
+      setBigPicFileList([
+        {
+          uid: '',
+          name: '',
+          status: 'done',
+          url: res.data as any
+        }
+      ])
+      setBigPic(res.data as any)
     }
   }
 
@@ -172,6 +209,33 @@ const MyForm: React.FC<FormProps> = (props) => {
             onRemove: () => {
               setLogoFileList([])
               setLogo('')
+            },
+            accept: 'image/png,image/jpeg,image/jpg',
+            beforeUpload: (file: any) => {
+              const isJpgOrPng =
+                file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
+              if (!isJpgOrPng) {
+                message.error('只能上传JPG/PNG/JPEG格式的图片!')
+              }
+              return isJpgOrPng
+            }
+          }}
+        />
+        <ProFormUploadButton
+          extra="支持扩展名：.png .jpg .jpeg"
+          label="专区大图"
+          title="上传图片"
+          listType="picture-card"
+          fieldProps={{
+            headers: {
+              Authorization: 'Bearer ' + localStorage.getItem('token')
+            },
+            customRequest: uploadBigPicFile,
+            fileList: bigPicFileList,
+            maxCount: 1,
+            onRemove: () => {
+              setBigPicFileList([])
+              setBigPic('')
             },
             accept: 'image/png,image/jpeg,image/jpg',
             beforeUpload: (file: any) => {

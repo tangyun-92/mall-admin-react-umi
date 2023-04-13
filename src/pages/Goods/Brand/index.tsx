@@ -1,4 +1,3 @@
-// import { addRule, removeRule, rule, updateRule } from '@/services/ant-design-pro/api';
 import {
   addBrandUsingPOST,
   deleteBrandUsingPOST,
@@ -70,7 +69,11 @@ const TableList: React.FC = () => {
   const handleAdd = async (fields: API.BrandListItem) => {
     const hide = message.loading('正在添加')
     try {
-      await addBrandUsingPOST({ ...fields, logo: createFormRef.current.logo })
+      await addBrandUsingPOST({
+        ...fields,
+        logo: createFormRef.current.logo,
+        bigPic: createFormRef.current.bigPic
+      })
       hide()
       message.success('新增成功！')
       return true
@@ -87,7 +90,12 @@ const TableList: React.FC = () => {
   const handleUpdate = async (fields: API.BrandListItem, id: number) => {
     const hide = message.loading('Configuring')
     try {
-      await updateBrandUsingPOST({ ...fields, id, logo: updateFormRef.current.logo })
+      await updateBrandUsingPOST({
+        ...fields,
+        id,
+        logo: updateFormRef.current.logo,
+        bigPic: updateFormRef.current.bigPic
+      })
       hide()
       message.success('更新成功！')
       return true
