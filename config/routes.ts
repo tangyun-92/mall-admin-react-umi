@@ -26,6 +26,15 @@ export default [
       { path: '/goods/brand', name: '品牌管理', component: './Goods/Brand', access: 'canBrand' }
     ]
   },
+  {
+    path: '/users',
+    name: '用户',
+    icon: 'user',
+    routes: [
+      { path: '/users', redirect: '/users/user', access: 'canUser' },
+      { path: '/users/user', name: '用户管理', component: './Users/User', access: 'canUser' }
+    ]
+  },
   { name: '查询表格', icon: 'table', path: '/list', component: './TableList' },
   { path: '/', redirect: '/welcome' },
   { path: '*', layout: false, component: './404' }
