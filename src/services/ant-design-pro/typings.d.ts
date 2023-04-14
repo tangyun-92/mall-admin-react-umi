@@ -1,4 +1,11 @@
 declare namespace API {
+  type assignRoleUsingPOSTParams = {
+    /** adminId */
+    adminId: number
+    /** roleId */
+    roleId: number
+  }
+
   type deleteBrandUsingPOSTParams = {
     /** ids */
     ids: number[]

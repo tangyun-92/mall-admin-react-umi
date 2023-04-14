@@ -18,6 +18,11 @@ export default function access(
     // 删除品牌的权限
     canBrandDelete: permissionList?.find((item) => item.value === 'pms:brand:delete'),
     // 用户列表的权限
-    canUser: permissionList?.find((item) => item.value === 'ums:user:read')
+    canUser: permissionList?.find((item) => item.value === 'ums:admin:read'),
+    canUserCreate: permissionList?.find((item) => item.value === 'ums:admin:create'),
+    canUserUpdate: permissionList?.find((item) => item.value === 'ums:admin:update'),
+    canUserDelete: permissionList?.find((item) => item.value === 'ums:admin:delete'),
+    // 分配角色的权限
+    canUserAssignRole: permissionList?.find((item) => item.value === 'ums:admin:assignRole')
   }
 }

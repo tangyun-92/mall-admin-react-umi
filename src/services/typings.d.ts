@@ -53,5 +53,7 @@ declare namespace API {
     note: string
     createTime: string
     password: string
+    roleId: number
+    roleName: string
   }
 }

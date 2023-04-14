@@ -1,5 +1,6 @@
 import {
   addUserUsingPOST,
+  assignRoleUsingPOST,
   deleteUserUsingPOST,
   getUserListUsingGET,
   updateUserUsingPOST
@@ -18,6 +19,7 @@ import '@umijs/max'
 import { useAccess } from '@umijs/max'
 import { Button, Drawer, message } from 'antd'
 import React, { useRef, useState } from 'react'
+import AssignRole from './components/AssignRole'
 import MyForm from './components/MyForm'
 
 // 是否品牌制造商枚举
@@ -61,6 +63,10 @@ const TableList: React.FC = () => {
   const [currentRow, setCurrentRow] = useState<API.UserListItem>()
   // 选中的行
   const [selectedRowsState, setSelectedRows] = useState<API.UserListItem[]>([])
+
+  // 分配角色弹窗开关
+  const [assignRoleModalOpen, handleAssignRoleModalOpen] = useState<boolean>(false)
+  const assignRoleFormRef = useRef<any>()
 
   /**
    * @zh-CN 添加节点
@@ -124,6 +130,25 @@ const TableList: React.FC = () => {
   }
 
   /**
+   * 分配角色
+   */
+  async function handleAssignRole(fields: API.UserListItem, id: number) {
+    const hide = message.loading('正在分配角色')
+    try {
+      await assignRoleUsingPOST({
+        adminId: id,
+        roleId: fields.roleId
+      })
+      hide()
+      message.success('分配角色成功！')
+      return true
+    } catch (error) {
+      hide()
+      return false
+    }
+  }
+
+  /**
    * @zh-CN 国际化配置
    * */
   const columns: ProColumns<API.UserListItem>[] = [
@@ -147,6 +172,11 @@ const TableList: React.FC = () => {
     {
       title: '昵称',
       dataIndex: 'nickName'
+    },
+    {
+      title: '角色',
+      dataIndex: 'roleName',
+      hideInSearch: true
     },
     {
       title: '头像',
@@ -177,13 +207,13 @@ const TableList: React.FC = () => {
       valueType: 'option',
       hideInDescriptions: true,
       render: (_, record) => [
-        access.canBrandUpdate ? (
+        access.canUserUpdate ? (
           <a
             key="config"
             onClick={() => {
               handleUpdateModalOpen(true)
               setCurrentRow(record)
-              setModalTitle('编辑品牌')
+              setModalTitle('编辑用户')
             }}
           >
             编辑
@@ -191,7 +221,7 @@ const TableList: React.FC = () => {
         ) : (
           ''
         ),
-        access.canBrandDelete ? (
+        access.canUserDelete ? (
           <a
             key="delete"
             onClick={async () => {
@@ -200,6 +230,19 @@ const TableList: React.FC = () => {
             }}
           >
             删除
+          </a>
+        ) : (
+          ''
+        ),
+        access.canUserAssignRole ? (
+          <a
+            key="assignRole"
+            onClick={() => {
+              handleAssignRoleModalOpen(true)
+              setCurrentRow(record)
+            }}
+          >
+            分配角色
           </a>
         ) : (
           ''
@@ -217,13 +260,13 @@ const TableList: React.FC = () => {
           labelWidth: 120
         }}
         toolBarRender={() => [
-          access.canBrandCreate ? (
+          access.canUserCreate ? (
             <Button
               type="primary"
               key="primary"
               onClick={() => {
                 handleModalOpen(true)
-                setModalTitle('新增品牌')
+                setModalTitle('新增用户')
               }}
             >
               <PlusOutlined /> 新建
@@ -268,7 +311,7 @@ const TableList: React.FC = () => {
             </div>
           }
         >
-          {access.canBrandDelete ? (
+          {access.canUserDelete ? (
             <Button
               type="primary"
               danger
@@ -362,6 +405,32 @@ const TableList: React.FC = () => {
           />
         )}
       </Drawer>
+
+      {/* 分配角色 */}
+      <AssignRole
+        modalOpen={assignRoleModalOpen}
+        onRef={assignRoleFormRef}
+        onOpenChange={(val) => {
+          handleAssignRoleModalOpen(val)
+          if (!val) {
+            if (assignRoleFormRef.current) {
+              assignRoleFormRef.current?.resetFields()
+              setCurrentRow(undefined)
+            }
+          }
+        }}
+        onSubmit={async (values: API.UserListItem) => {
+          const success = await handleAssignRole(values, currentRow?.id as number)
+          console.log(success)
+          if (success) {
+            handleAssignRoleModalOpen(false)
+            if (actionRef.current) {
+              actionRef.current.reload()
+            }
+          }
+        }}
+        initialValues={currentRow}
+      ></AssignRole>
     </PageContainer>
   )
 }
