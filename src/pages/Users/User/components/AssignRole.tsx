@@ -1,18 +1,16 @@
-import { ModalForm, ProForm, ProFormSelect, useDeepCompareEffect } from '@ant-design/pro-components'
-import { useImperativeHandle, useState } from 'react'
+import { ModalForm, ProForm, ProFormSelect } from '@ant-design/pro-components'
+import { useEffect, useImperativeHandle } from 'react'
 
 export type AssignRoleProps = {
   onSubmit: (values: API.UserListItem) => Promise<void>
   onOpenChange: (value: boolean) => void
   modalOpen: boolean
-  initialValues?: Partial<API.UserListItem>
+  initialValues?: number[]
   onRef: React.MutableRefObject<any>
-  currentRoleList: number[]
 }
 
 const AssignRole: React.FC<AssignRoleProps> = (props) => {
   const [form] = ProForm.useForm()
-  const [roleList, setRoleList] = useState<number[]>([])
 
   /**
    * 重置表单
@@ -28,19 +26,19 @@ const AssignRole: React.FC<AssignRoleProps> = (props) => {
     }
   })
 
-  useDeepCompareEffect(() => {
+  useEffect(() => {
     if (props.initialValues) {
+      console.log(props.initialValues)
       form.setFieldsValue(props.initialValues)
     }
   }, [props.initialValues])
 
-  // todo:问题
-  useDeepCompareEffect(() => {
-    if (props.currentRoleList.length > 0) {
-      console.log(props.currentRoleList)
-      setRoleList(props.currentRoleList)
-    }
-  }, [props.currentRoleList])
+  // useDeepCompareEffect(() => {
+  //   if (props.initialValues) {
+  //     console.log(props.initialValues)
+  //     form.setFieldsValue(props.initialValues)
+  //   }
+  // }, [props.initialValues])
 
   return (
     <ModalForm
@@ -60,7 +58,7 @@ const AssignRole: React.FC<AssignRoleProps> = (props) => {
         label="角色"
         placeholder={'请选择'}
         rules={[{ required: true, message: '请选择角色' }]}
-        initialValue={roleList}
+        initialValue={props.initialValues}
         fieldProps={{
           options: [
             { label: '商品管理员', value: 1 },

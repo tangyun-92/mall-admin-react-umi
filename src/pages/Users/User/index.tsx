@@ -160,6 +160,7 @@ const TableList: React.FC = () => {
       })
       const roleList = res.data?.map((item: any) => item.roleId)
       setCurrentRoleList(roleList)
+      console.log(roleList)
 
       return true
     } catch (error) {
@@ -254,6 +255,8 @@ const TableList: React.FC = () => {
             onClick={() => {
               handleAssignRoleModalOpen(true)
               setCurrentRow(record)
+
+              getUserRoleListByAdminId(record?.id)
             }}
           >
             分配角色
@@ -424,7 +427,41 @@ const TableList: React.FC = () => {
       <AssignRole
         modalOpen={assignRoleModalOpen}
         onRef={assignRoleFormRef}
-        currentRoleList={currentRoleList}
+        onOpenChange={(val) => {
+          handleAssignRoleModalOpen(val)
+          if (!val) {
+            if (assignRoleFormRef.current) {
+              assignRoleFormRef.current?.resetFields()
+              setCurrentRow(undefined)
+            }
+          }
+        }}
+        onSubmit={async (values: API.UserListItem) => {
+          console.log(values)
+
+          const success = await handleAssignRole(values, currentRow?.id as number)
+          console.log(success)
+          if (success) {
+            handleAssignRoleModalOpen(false)
+            if (actionRef.current) {
+              actionRef.current.reload()
+            }
+          }
+        }}
+        initialValues={currentRoleList}
+      ></AssignRole>
+
+      {/* <Modal
+        open={assignRoleModalOpen}
+        onCancel={() => handleAssignRoleModalOpen(false)}
+      >
+        <AssignRoles initialValues={currentRoleList}></AssignRoles>
+      </Modal> */}
+
+      {/* <AssignRoles
+        modalOpen={assignRoleModalOpen}
+        onRef={assignRoleFormRef}
+        close={handleAssignRoleModalOpen(false)}
         onOpenChange={(val) => {
           handleAssignRoleModalOpen(val)
           if (!val) {
@@ -439,6 +476,8 @@ const TableList: React.FC = () => {
           }
         }}
         onSubmit={async (values: API.UserListItem) => {
+          console.log(values)
+
           const success = await handleAssignRole(values, currentRow?.id as number)
           console.log(success)
           if (success) {
@@ -448,8 +487,10 @@ const TableList: React.FC = () => {
             }
           }
         }}
-        initialValues={currentRow}
-      ></AssignRole>
+        initialValues={currentRoleList}
+      >
+        123
+      </AssignRoles> */}
     </PageContainer>
   )
 }
