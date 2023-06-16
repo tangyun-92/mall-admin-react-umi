@@ -74,6 +74,21 @@ export async function deleteUserUsingDELETE(
   })
 }
 
+/** 后台-根据用户id获取角色id列表 GET /admin/user/getUserRoleListByAdminId */
+export async function getUserRoleListByAdminIdUsingGET(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.getUserRoleListByAdminIdUsingGETParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.result>('/admin/user/getUserRoleListByAdminId', {
+    method: 'GET',
+    params: {
+      ...params
+    },
+    ...(options || {})
+  })
+}
+
 /** 后台-用户列表 GET /admin/user/list */
 export async function getUserListUsingGET(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)

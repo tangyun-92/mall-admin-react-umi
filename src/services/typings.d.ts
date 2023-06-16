@@ -43,7 +43,7 @@ declare namespace API {
   }
 
   type UserListItem = {
-    id: number
+    id: number | undefined
     username: string
     nickName: string
     loginTime: string

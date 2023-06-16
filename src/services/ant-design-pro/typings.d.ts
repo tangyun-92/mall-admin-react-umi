@@ -49,6 +49,11 @@ declare namespace API {
     username?: string
   }
 
+  type getUserRoleListByAdminIdUsingGETParams = {
+    /** adminId */
+    adminId?: number
+  }
+
   type ModelAndView = {
     empty?: boolean
     model?: Record<string, any>

@@ -1,5 +1,5 @@
 import { ModalForm, ProForm, ProFormSelect, useDeepCompareEffect } from '@ant-design/pro-components'
-import { useImperativeHandle } from 'react'
+import { useImperativeHandle, useState } from 'react'
 
 export type AssignRoleProps = {
   onSubmit: (values: API.UserListItem) => Promise<void>
@@ -7,10 +7,12 @@ export type AssignRoleProps = {
   modalOpen: boolean
   initialValues?: Partial<API.UserListItem>
   onRef: React.MutableRefObject<any>
+  currentRoleList: number[]
 }
 
 const AssignRole: React.FC<AssignRoleProps> = (props) => {
   const [form] = ProForm.useForm()
+  const [roleList, setRoleList] = useState<number[]>([])
 
   /**
    * 重置表单
@@ -32,6 +34,14 @@ const AssignRole: React.FC<AssignRoleProps> = (props) => {
     }
   }, [props.initialValues])
 
+  // todo:问题
+  useDeepCompareEffect(() => {
+    if (props.currentRoleList.length > 0) {
+      console.log(props.currentRoleList)
+      setRoleList(props.currentRoleList)
+    }
+  }, [props.currentRoleList])
+
   return (
     <ModalForm
       title="分配角色"
@@ -50,7 +60,7 @@ const AssignRole: React.FC<AssignRoleProps> = (props) => {
         label="角色"
         placeholder={'请选择'}
         rules={[{ required: true, message: '请选择角色' }]}
-        initialValue={props.initialValues}
+        initialValue={roleList}
         fieldProps={{
           options: [
             { label: '商品管理员', value: 1 },

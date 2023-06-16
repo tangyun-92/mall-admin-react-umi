@@ -2,6 +2,7 @@ import {
   assignRoleUsingPOST,
   deleteUserUsingDELETE,
   getUserListUsingGET,
+  getUserRoleListByAdminIdUsingGET,
   saveUserUsingPOST
 } from '@/services/ant-design-pro/userManagementAdmin'
 import { PlusOutlined } from '@ant-design/icons'
@@ -66,6 +67,8 @@ const TableList: React.FC = () => {
   // 分配角色弹窗开关
   const [assignRoleModalOpen, handleAssignRoleModalOpen] = useState<boolean>(false)
   const assignRoleFormRef = useRef<any>()
+  // 当前行角色列表
+  const [currentRoleList, setCurrentRoleList] = useState<number[]>([])
 
   /**
    * @zh-CN 添加节点
@@ -143,6 +146,23 @@ const TableList: React.FC = () => {
       return true
     } catch (error) {
       hide()
+      return false
+    }
+  }
+
+  /**
+   * 根据用户id获取角色id列表
+   */
+  async function getUserRoleListByAdminId(adminId: number | undefined) {
+    try {
+      const res = await getUserRoleListByAdminIdUsingGET({
+        adminId
+      })
+      const roleList = res.data?.map((item: any) => item.roleId)
+      setCurrentRoleList(roleList)
+
+      return true
+    } catch (error) {
       return false
     }
   }
@@ -404,12 +424,17 @@ const TableList: React.FC = () => {
       <AssignRole
         modalOpen={assignRoleModalOpen}
         onRef={assignRoleFormRef}
+        currentRoleList={currentRoleList}
         onOpenChange={(val) => {
           handleAssignRoleModalOpen(val)
           if (!val) {
             if (assignRoleFormRef.current) {
               assignRoleFormRef.current?.resetFields()
               setCurrentRow(undefined)
+            }
+          } else {
+            if (currentRow) {
+              getUserRoleListByAdminId(currentRow?.id)
             }
           }
         }}
