@@ -27,18 +27,12 @@ const AssignRole: React.FC<AssignRoleProps> = (props) => {
   })
 
   useEffect(() => {
-    if (props.initialValues) {
-      console.log(props.initialValues)
-      form.setFieldsValue(props.initialValues)
+    if (props.initialValues && props.initialValues.length > 0) {
+      form.setFieldsValue({
+        roleId: props.initialValues
+      })
     }
   }, [props.initialValues])
-
-  // useDeepCompareEffect(() => {
-  //   if (props.initialValues) {
-  //     console.log(props.initialValues)
-  //     form.setFieldsValue(props.initialValues)
-  //   }
-  // }, [props.initialValues])
 
   return (
     <ModalForm
@@ -58,7 +52,6 @@ const AssignRole: React.FC<AssignRoleProps> = (props) => {
         label="角色"
         placeholder={'请选择'}
         rules={[{ required: true, message: '请选择角色' }]}
-        initialValue={props.initialValues}
         fieldProps={{
           options: [
             { label: '商品管理员', value: 1 },
