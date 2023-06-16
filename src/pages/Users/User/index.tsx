@@ -1,9 +1,8 @@
 import {
-  addUserUsingPOST,
   assignRoleUsingPOST,
-  deleteUserUsingPOST,
+  deleteUserUsingDELETE,
   getUserListUsingGET,
-  updateUserUsingPOST
+  saveUserUsingPOST
 } from '@/services/ant-design-pro/userManagementAdmin'
 import { PlusOutlined } from '@ant-design/icons'
 import {
@@ -24,21 +23,21 @@ import MyForm from './components/MyForm'
 
 // 是否品牌制造商枚举
 export const factoryStatusEnum = {
-  '1': {
+  1: {
     text: '是',
     status: 'Success'
   },
-  '0': {
+  0: {
     text: '不是',
     status: 'Default'
   }
 }
 export const showStatusEnum = {
-  '1': {
+  1: {
     text: '启用',
     status: 'Success'
   },
-  '0': {
+  0: {
     text: '禁用',
     status: 'Default'
   }
@@ -75,7 +74,7 @@ const TableList: React.FC = () => {
   const handleAdd = async (fields: API.UserListItem) => {
     const hide = message.loading('正在添加')
     try {
-      await addUserUsingPOST({
+      await saveUserUsingPOST({
         ...fields,
         icon: createFormRef.current?.icon
       })
@@ -95,7 +94,7 @@ const TableList: React.FC = () => {
   const handleUpdate = async (fields: API.UserListItem, id: number) => {
     const hide = message.loading('Configuring')
     try {
-      await updateUserUsingPOST({
+      await saveUserUsingPOST({
         ...fields,
         id,
         icon: updateFormRef.current?.icon
@@ -117,7 +116,7 @@ const TableList: React.FC = () => {
     const hide = message.loading('正在删除')
     if (!selectedRows) return true
     try {
-      await deleteUserUsingPOST({
+      await deleteUserUsingDELETE({
         ids: selectedRows.map((row) => row.id).join(',') as any
       })
       hide()
@@ -132,12 +131,12 @@ const TableList: React.FC = () => {
   /**
    * 分配角色
    */
-  async function handleAssignRole(fields: API.UserListItem, id: number) {
+  async function handleAssignRole(fields: any, id: number) {
     const hide = message.loading('正在分配角色')
     try {
       await assignRoleUsingPOST({
         adminId: id,
-        roleId: fields.roleId
+        roleIds: fields.roleId.join(',') as any
       })
       hide()
       message.success('分配角色成功！')
@@ -174,11 +173,6 @@ const TableList: React.FC = () => {
       dataIndex: 'nickName'
     },
     {
-      title: '角色',
-      dataIndex: 'roleName',
-      hideInSearch: true
-    },
-    {
       title: '头像',
       dataIndex: 'icon',
       valueType: 'image',
@@ -207,7 +201,7 @@ const TableList: React.FC = () => {
       valueType: 'option',
       hideInDescriptions: true,
       render: (_, record) => [
-        access.canUserUpdate ? (
+        access.canUserSave ? (
           <a
             key="config"
             onClick={() => {
@@ -260,7 +254,7 @@ const TableList: React.FC = () => {
           labelWidth: 120
         }}
         toolBarRender={() => [
-          access.canUserCreate ? (
+          access.canUserSave ? (
             <Button
               type="primary"
               key="primary"

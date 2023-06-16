@@ -33,8 +33,8 @@ declare namespace API {
     name: string
     firstLetter: string
     sort: number
-    factoryStatus: string
-    showStatus: string
+    factoryStatus: number
+    showStatus: number
     productCount: number
     productCommentCount: number
     logo: string
@@ -47,13 +47,11 @@ declare namespace API {
     username: string
     nickName: string
     loginTime: string
-    status: string
+    status: number
     icon: string
     email: string
     note: string
     createTime: string
     password: string
-    roleId: number
-    roleName: string
   }
 }

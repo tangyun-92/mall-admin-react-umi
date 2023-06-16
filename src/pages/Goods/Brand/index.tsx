@@ -1,8 +1,7 @@
 import {
-  addBrandUsingPOST,
-  deleteBrandUsingPOST,
+  deleteBrandUsingDELETE,
   getBrandListUsingGET,
-  updateBrandUsingPOST
+  saveBrandUsingPOST
 } from '@/services/ant-design-pro/brandManagementAdmin'
 import { PlusOutlined } from '@ant-design/icons'
 import {
@@ -69,7 +68,7 @@ const TableList: React.FC = () => {
   const handleAdd = async (fields: API.BrandListItem) => {
     const hide = message.loading('正在添加')
     try {
-      await addBrandUsingPOST({
+      await saveBrandUsingPOST({
         ...fields,
         logo: createFormRef.current.logo,
         bigPic: createFormRef.current.bigPic
@@ -90,7 +89,7 @@ const TableList: React.FC = () => {
   const handleUpdate = async (fields: API.BrandListItem, id: number) => {
     const hide = message.loading('Configuring')
     try {
-      await updateBrandUsingPOST({
+      await saveBrandUsingPOST({
         ...fields,
         id,
         logo: updateFormRef.current.logo,
@@ -113,7 +112,7 @@ const TableList: React.FC = () => {
     const hide = message.loading('正在删除')
     if (!selectedRows) return true
     try {
-      await deleteBrandUsingPOST({
+      await deleteBrandUsingDELETE({
         ids: selectedRows.map((row) => row.id).join(',') as any
       })
       hide()
@@ -206,7 +205,7 @@ const TableList: React.FC = () => {
       valueType: 'option',
       hideInDescriptions: true,
       render: (_, record) => [
-        access.canBrandUpdate ? (
+        access.canBrandSave ? (
           <a
             key="config"
             onClick={() => {
@@ -246,7 +245,7 @@ const TableList: React.FC = () => {
           labelWidth: 120
         }}
         toolBarRender={() => [
-          access.canBrandCreate ? (
+          access.canBrandSave ? (
             <Button
               type="primary"
               key="primary"

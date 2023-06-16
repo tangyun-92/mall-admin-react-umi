@@ -1,15 +1,15 @@
-import Footer from '@/components/Footer';
-import { loginUsingPOST } from '@/services/ant-design-pro/userManagementAdmin';
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { LoginForm, ProFormCheckbox, ProFormText } from '@ant-design/pro-components';
-import { useEmotionCss } from '@ant-design/use-emotion-css';
-import { Helmet, history, useModel } from '@umijs/max';
-import { message, Tabs } from 'antd';
-import React from 'react';
-import { flushSync } from 'react-dom';
-import Settings from '../../../../config/defaultSettings';
+import Footer from '@/components/Footer'
+import { loginUsingPOST } from '@/services/ant-design-pro/userManagementAdmin'
+import { LockOutlined, UserOutlined } from '@ant-design/icons'
+import { LoginForm, ProFormCheckbox, ProFormText } from '@ant-design/pro-components'
+import { useEmotionCss } from '@ant-design/use-emotion-css'
+import { Helmet, history, useModel } from '@umijs/max'
+import { message, Tabs } from 'antd'
+import React from 'react'
+import { flushSync } from 'react-dom'
+import Settings from '../../../../config/defaultSettings'
 const Login: React.FC = () => {
-  const { initialState, setInitialState } = useModel('@@initialState');
+  const { initialState, setInitialState } = useModel('@@initialState')
   const containerClassName = useEmotionCss(() => {
     return {
       display: 'flex',
@@ -18,45 +18,45 @@ const Login: React.FC = () => {
       overflow: 'auto',
       backgroundImage:
         "url('https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/V-_oS6r-i7wAAAAAAAAAAAAAFl94AQBr')",
-      backgroundSize: '100% 100%',
-    };
-  });
+      backgroundSize: '100% 100%'
+    }
+  })
   const fetchUserInfo = async () => {
-    const userInfo = await initialState?.fetchUserInfo?.();
-    const currentUser = userInfo?.info;
-    const permissionList = userInfo?.permissionList;
+    const userInfo = await initialState?.fetchUserInfo?.()
+    const currentUser = userInfo?.info
+    const permissionList = userInfo?.permissionList
     if (userInfo) {
       flushSync(() => {
         setInitialState((s) => ({
           ...s,
           currentUser,
-          permissionList,
-        }));
-      });
+          permissionList
+        }))
+      })
     }
-  };
+  }
   const handleSubmit = async (values: API.loginUserParams) => {
     try {
       // 登录
       const msg = await loginUsingPOST({
-        ...values,
-      });
+        ...values
+      })
       if (msg.success) {
-        const defaultLoginSuccessMessage = '登录成功！';
-        message.success(defaultLoginSuccessMessage);
-        localStorage.setItem('token', msg.data?.token);
-        await fetchUserInfo();
-        const urlParams = new URL(window.location.href).searchParams;
-        history.push(urlParams.get('redirect') || '/');
-        return;
+        const defaultLoginSuccessMessage = '登录成功！'
+        message.success(defaultLoginSuccessMessage)
+        localStorage.setItem('token', msg.data?.token)
+        await fetchUserInfo()
+        const urlParams = new URL(window.location.href).searchParams
+        history.push(urlParams.get('redirect') || '/')
+        return
       }
-      console.log(msg);
+      console.log(msg)
     } catch (error) {
-      const defaultLoginFailureMessage = '登录失败，请重试！';
-      console.log(error);
-      message.error(defaultLoginFailureMessage);
+      const defaultLoginFailureMessage = '登录失败，请重试！'
+      console.log(error)
+      message.error(defaultLoginFailureMessage)
     }
-  };
+  }
   return (
     <div className={containerClassName}>
       <Helmet>
@@ -67,22 +67,22 @@ const Login: React.FC = () => {
       <div
         style={{
           flex: '1',
-          padding: '32px 0',
+          padding: '32px 0'
         }}
       >
         <LoginForm
           contentStyle={{
             minWidth: 280,
-            maxWidth: '75vw',
+            maxWidth: '75vw'
           }}
           logo={<img alt="logo" src="/logo.svg" />}
           title="Ant Design"
           subTitle={'Ant Design 是西湖区最具影响力的 Web 设计规范'}
           initialValues={{
-            autoLogin: true,
+            autoLogin: true
           }}
           onFinish={async (values) => {
-            await handleSubmit(values as API.loginUserParams);
+            await handleSubmit(values as API.loginUserParams)
           }}
         >
           <Tabs
@@ -90,8 +90,8 @@ const Login: React.FC = () => {
             items={[
               {
                 key: 'account',
-                label: '账户密码登录',
-              },
+                label: '账户密码登录'
+              }
             ]}
           />
           {
@@ -100,37 +100,37 @@ const Login: React.FC = () => {
                 name="username"
                 fieldProps={{
                   size: 'large',
-                  prefix: <UserOutlined />,
+                  prefix: <UserOutlined />
                 }}
                 placeholder={'用户名: admin or user'}
                 initialValue="super"
                 rules={[
                   {
                     required: true,
-                    message: '用户名是必填项！',
-                  },
+                    message: '用户名是必填项！'
+                  }
                 ]}
               />
               <ProFormText.Password
                 name="password"
                 fieldProps={{
                   size: 'large',
-                  prefix: <LockOutlined />,
+                  prefix: <LockOutlined />
                 }}
                 placeholder={'密码: ant.design'}
-                initialValue="123456"
+                initialValue="111111"
                 rules={[
                   {
                     required: true,
-                    message: '密码是必填项！',
-                  },
+                    message: '密码是必填项！'
+                  }
                 ]}
               />
             </>
           }
           <div
             style={{
-              marginBottom: 24,
+              marginBottom: 24
             }}
           >
             <ProFormCheckbox noStyle name="autoLogin">
@@ -138,7 +138,7 @@ const Login: React.FC = () => {
             </ProFormCheckbox>
             <a
               style={{
-                float: 'right',
+                float: 'right'
               }}
             >
               忘记密码 ?
@@ -148,6 +148,6 @@ const Login: React.FC = () => {
       </div>
       <Footer />
     </div>
-  );
-};
-export default Login;
+  )
+}
+export default Login

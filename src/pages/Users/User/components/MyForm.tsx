@@ -10,7 +10,6 @@ import {
 } from '@ant-design/pro-components'
 import { message, UploadFile } from 'antd'
 import { useImperativeHandle, useState } from 'react'
-import { showStatusEnum } from '..'
 
 export type FormProps = {
   onSubmit: (values: API.UserListItem) => Promise<void>
@@ -126,7 +125,13 @@ const MyForm: React.FC<FormProps> = (props) => {
           name="status"
           label="状态"
           placeholder={'请选择'}
-          valueEnum={showStatusEnum}
+          initialValue={props.initialValues?.status}
+          fieldProps={{
+            options: [
+              { label: '禁用', value: 0 },
+              { label: '启用', value: 1 }
+            ]
+          }}
         />
       </ProForm.Group>
       <ProFormTextArea name="note" label="备注" placeholder={'请输入'} />

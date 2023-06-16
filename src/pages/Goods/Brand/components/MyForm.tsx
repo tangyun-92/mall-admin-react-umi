@@ -10,7 +10,7 @@ import {
 } from '@ant-design/pro-components'
 import { message, UploadFile } from 'antd'
 import { useImperativeHandle, useState } from 'react'
-import { factoryStatusEnum, showStatusEnum } from '..'
+import { factoryStatusEnum } from '..'
 
 export type FormProps = {
   onSubmit: (values: API.BrandListItem) => Promise<void>
@@ -168,6 +168,13 @@ const MyForm: React.FC<FormProps> = (props) => {
           label="是否品牌制造商"
           placeholder={'请选择'}
           valueEnum={factoryStatusEnum}
+          initialValue={props.initialValues?.factoryStatus}
+          fieldProps={{
+            options: [
+              { label: '不是', value: 0 },
+              { label: '是', value: 1 }
+            ]
+          }}
         />
         <ProFormText
           rules={[
@@ -189,7 +196,13 @@ const MyForm: React.FC<FormProps> = (props) => {
           name="showStatus"
           label="显示状态"
           placeholder={'请选择'}
-          valueEnum={showStatusEnum}
+          initialValue={props.initialValues?.showStatus}
+          fieldProps={{
+            options: [
+              { label: '不显示', value: 0 },
+              { label: '显示', value: 1 }
+            ]
+          }}
         />
       </ProForm.Group>
       <ProFormTextArea name="brandStory" label="品牌故事" placeholder={'请输入'} />

@@ -50,12 +50,14 @@ const AssignRole: React.FC<AssignRoleProps> = (props) => {
         label="角色"
         placeholder={'请选择'}
         rules={[{ required: true, message: '请选择角色' }]}
+        initialValue={props.initialValues}
         fieldProps={{
           options: [
             { label: '商品管理员', value: 1 },
             { label: '订单管理员', value: 2 },
             { label: '超级管理员', value: 5 }
-          ]
+          ],
+          mode: 'multiple'
         }}
       />
     </ModalForm>

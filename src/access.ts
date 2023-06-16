@@ -11,16 +11,13 @@ export default function access(
     canProduct: permissionList?.find((item) => item.value === 'pms:product:read'),
     // 品牌列表的权限
     canBrand: permissionList?.find((item) => item.value === 'pms:brand:read'),
-    // 新增品牌的权限
-    canBrandCreate: permissionList?.find((item) => item.value === 'pms:brand:create'),
-    // 更新品牌的权限
-    canBrandUpdate: permissionList?.find((item) => item.value === 'pms:brand:update'),
+    // 新增/更新品牌的权限
+    canBrandSave: permissionList?.find((item) => item.value === 'pms:brand:save'),
     // 删除品牌的权限
     canBrandDelete: permissionList?.find((item) => item.value === 'pms:brand:delete'),
     // 用户列表的权限
     canUser: permissionList?.find((item) => item.value === 'ums:admin:read'),
-    canUserCreate: permissionList?.find((item) => item.value === 'ums:admin:create'),
-    canUserUpdate: permissionList?.find((item) => item.value === 'ums:admin:update'),
+    canUserSave: permissionList?.find((item) => item.value === 'ums:admin:save'),
     canUserDelete: permissionList?.find((item) => item.value === 'ums:admin:delete'),
     // 分配角色的权限
     canUserAssignRole: permissionList?.find((item) => item.value === 'ums:admin:assignRole')
