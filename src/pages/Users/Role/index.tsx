@@ -1,9 +1,11 @@
 import {
+  deleteRoleUsingDELETE,
+  getRoleListUsingGET,
+  saveRoleUsingPOST
+} from '@/services/ant-design-pro/roleManagementAdmin'
+import {
   assignRoleUsingPOST,
-  deleteUserUsingDELETE,
-  getUserListUsingGET,
-  getUserRoleListByAdminIdUsingGET,
-  saveUserUsingPOST
+  getUserRoleListByAdminIdUsingGET
 } from '@/services/ant-design-pro/userManagementAdmin'
 import { PlusOutlined } from '@ant-design/icons'
 import {
@@ -60,9 +62,9 @@ const TableList: React.FC = () => {
 
   const actionRef = useRef<ActionType>()
   // 当前行
-  const [currentRow, setCurrentRow] = useState<API.UserListItem>()
+  const [currentRow, setCurrentRow] = useState<API.RoleListItem>()
   // 选中的行
-  const [selectedRowsState, setSelectedRows] = useState<API.UserListItem[]>([])
+  const [selectedRowsState, setSelectedRows] = useState<API.RoleListItem[]>([])
 
   // 分配角色弹窗开关
   const [assignRoleModalOpen, handleAssignRoleModalOpen] = useState<boolean>(false)
@@ -74,12 +76,11 @@ const TableList: React.FC = () => {
    * @zh-CN 添加节点
    * @param fields
    */
-  const handleAdd = async (fields: API.UserListItem) => {
+  const handleAdd = async (fields: API.RoleListItem) => {
     const hide = message.loading('正在添加')
     try {
-      await saveUserUsingPOST({
-        ...fields,
-        icon: createFormRef.current?.icon
+      await saveRoleUsingPOST({
+        ...fields
       })
       hide()
       message.success('新增成功！')
@@ -94,13 +95,12 @@ const TableList: React.FC = () => {
    * @zh-CN 更新节点
    * @param fields
    */
-  const handleUpdate = async (fields: API.UserListItem, id: number) => {
+  const handleUpdate = async (fields: API.RoleListItem, id: number) => {
     const hide = message.loading('Configuring')
     try {
-      await saveUserUsingPOST({
+      await saveRoleUsingPOST({
         ...fields,
-        id,
-        icon: updateFormRef.current?.icon
+        id
       })
       hide()
       message.success('更新成功！')
@@ -115,11 +115,11 @@ const TableList: React.FC = () => {
    * @zh-CN 删除节点
    * @param selectedRows
    */
-  const handleRemove = async (selectedRows: API.UserListItem[]) => {
+  const handleRemove = async (selectedRows: API.RoleListItem[]) => {
     const hide = message.loading('正在删除')
     if (!selectedRows) return true
     try {
-      await deleteUserUsingDELETE({
+      await deleteRoleUsingDELETE({
         ids: selectedRows.map((row) => row.id).join(',') as any
       })
       hide()
@@ -171,11 +171,11 @@ const TableList: React.FC = () => {
   /**
    * @zh-CN 国际化配置
    * */
-  const columns: ProColumns<API.UserListItem>[] = [
+  const columns: ProColumns<API.RoleListItem>[] = [
     {
-      title: '用户名',
-      dataIndex: 'username',
-      tip: '点击用户名可查看详情',
+      title: '角色名称',
+      dataIndex: 'name',
+      tip: '点击角色名称可查看详情',
       render: (dom, entity) => {
         return (
           <a
@@ -190,23 +190,14 @@ const TableList: React.FC = () => {
       }
     },
     {
-      title: '昵称',
-      dataIndex: 'nickName'
+      title: '排序',
+      dataIndex: 'sort',
+      hideInSearch: true,
+      hideInTable: true
     },
     {
-      title: '头像',
-      dataIndex: 'icon',
-      valueType: 'image',
-      hideInSearch: true
-    },
-    {
-      title: '最后一次登录时间',
-      dataIndex: 'loginTime',
-      hideInSearch: true
-    },
-    {
-      title: '备注',
-      dataIndex: 'note',
+      title: '描述',
+      dataIndex: 'description',
       hideInSearch: true,
       hideInTable: true
     },
@@ -223,7 +214,7 @@ const TableList: React.FC = () => {
       width: 180,
       hideInDescriptions: true,
       render: (_, record) => [
-        access.canUserSave ? (
+        access.canRoleSave ? (
           <a
             key="config"
             onClick={() => {
@@ -237,7 +228,7 @@ const TableList: React.FC = () => {
         ) : (
           ''
         ),
-        access.canUserDelete ? (
+        access.canRoleDelete ? (
           <a
             key="delete"
             onClick={async () => {
@@ -269,7 +260,7 @@ const TableList: React.FC = () => {
   ]
   return (
     <PageContainer>
-      <ProTable<API.UserListItem, API.getUserListUsingGETParams>
+      <ProTable<API.RoleListItem, API.getUserListUsingGETParams>
         headerTitle={'查询表格'}
         actionRef={actionRef}
         rowKey="id"
@@ -277,7 +268,7 @@ const TableList: React.FC = () => {
           labelWidth: 120
         }}
         toolBarRender={() => [
-          access.canUserSave ? (
+          access.canRoleSave ? (
             <Button
               type="primary"
               key="primary"
@@ -293,7 +284,7 @@ const TableList: React.FC = () => {
           )
         ]}
         request={async (params: { pageSize?: number; current?: number }) => {
-          const msg = await getUserListUsingGET({
+          const msg = await getRoleListUsingGET({
             ...params
           })
           return {
@@ -328,7 +319,7 @@ const TableList: React.FC = () => {
             </div>
           }
         >
-          {access.canUserDelete ? (
+          {access.canRoleDelete ? (
             <Button
               type="primary"
               danger
@@ -360,7 +351,7 @@ const TableList: React.FC = () => {
         }}
         modalOpen={createModalOpen}
         onRef={createFormRef}
-        onSubmit={async (values: API.UserListItem) => {
+        onSubmit={async (values: API.RoleListItem) => {
           const success = await handleAdd(values)
           if (success) {
             handleModalOpen(false)
@@ -386,7 +377,7 @@ const TableList: React.FC = () => {
         }}
         modalOpen={updateModalOpen}
         onRef={updateFormRef}
-        onSubmit={async (values: API.UserListItem) => {
+        onSubmit={async (values: API.RoleListItem) => {
           const success = await handleUpdate(values, currentRow?.id as number)
           if (success) {
             handleUpdateModalOpen(false)
@@ -408,17 +399,17 @@ const TableList: React.FC = () => {
         }}
         closable={false}
       >
-        {currentRow?.username && (
-          <ProDescriptions<API.UserListItem>
+        {currentRow?.name && (
+          <ProDescriptions<API.RoleListItem>
             column={1}
-            title={currentRow?.username}
+            title={currentRow?.name}
             request={async () => ({
               data: currentRow || {}
             })}
             params={{
-              id: currentRow?.username
+              id: currentRow?.name
             }}
-            columns={columns as ProDescriptionsItemProps<API.UserListItem>[]}
+            columns={columns as ProDescriptionsItemProps<API.RoleListItem>[]}
           />
         )}
       </Drawer>
@@ -436,7 +427,7 @@ const TableList: React.FC = () => {
             }
           }
         }}
-        onSubmit={async (values: API.UserListItem) => {
+        onSubmit={async (values: API.RoleListItem) => {
           console.log(values)
 
           const success = await handleAssignRole(values, currentRow?.id as number)

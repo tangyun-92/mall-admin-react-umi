@@ -32,7 +32,8 @@ export default [
     icon: 'user',
     routes: [
       { path: '/users', redirect: '/users/user', access: 'canUser' },
-      { path: '/users/user', name: '用户管理', component: './Users/User', access: 'canUser' }
+      { path: '/users/user', name: '用户管理', component: './Users/User', access: 'canUser' },
+      { path: '/users/role', name: '角色管理', component: './Users/Role', access: 'canRole' }
     ]
   },
   { name: '查询表格', icon: 'table', path: '/list', component: './TableList' },

@@ -20,6 +20,10 @@ export default function access(
     canUserSave: permissionList?.find((item) => item.value === 'ums:admin:save'),
     canUserDelete: permissionList?.find((item) => item.value === 'ums:admin:delete'),
     // 分配角色的权限
-    canUserAssignRole: permissionList?.find((item) => item.value === 'ums:admin:assignRole')
+    canUserAssignRole: permissionList?.find((item) => item.value === 'ums:admin:assignRole'),
+    // 角色列表的权限
+    canRole: permissionList?.find((item) => item.value === 'ums:role:read'),
+    canRoleSave: permissionList?.find((item) => item.value === 'ums:role:save'),
+    canRoleDelete: permissionList?.find((item) => item.value === 'ums:role:delete')
   }
 }

@@ -11,6 +11,11 @@ declare namespace API {
     ids: number[]
   }
 
+  type deleteRoleUsingDELETEParams = {
+    /** ids */
+    ids: number[]
+  }
+
   type deleteUserUsingDELETEParams = {
     /** ids */
     ids: number[]
@@ -34,6 +39,17 @@ declare namespace API {
   type getPermissionListUsingGETParams = {
     /** adminId */
     adminId: number
+  }
+
+  type getRoleListUsingGETParams = {
+    /** 当前第几页 */
+    current?: number
+    /** 角色名称 */
+    name?: string
+    /** 每页显示条数 */
+    pageSize?: number
+    /** 状态：0-禁用；1-启用 */
+    status?: number
   }
 
   type getUserListUsingGETParams = {
@@ -198,6 +214,18 @@ declare namespace API {
     status?: number
     /** 用户名 */
     username: string
+  }
+
+  type UmsRoleSaveReq = {
+    /** 描述 */
+    description?: string
+    id?: number
+    /** 角色名称 */
+    name?: string
+    /** 排序 */
+    sort?: number
+    /** 状态：0-禁用；1-启用 */
+    status?: number
   }
 
   type View = {

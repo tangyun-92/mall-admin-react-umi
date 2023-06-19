@@ -54,4 +54,14 @@ declare namespace API {
     createTime: string
     password: string
   }
+
+  type RoleListItem = {
+    id: number | undefined
+    name: string
+    description: string
+    adminCount: number
+    createTime: string
+    status: number
+    sort: number
+  }
 }

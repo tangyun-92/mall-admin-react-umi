@@ -5,11 +5,13 @@
 import * as basicErrorController from './basicErrorController'
 import * as brandManagementAdmin from './brandManagementAdmin'
 import * as commonApi from './commonApi'
+import * as roleManagementAdmin from './roleManagementAdmin'
 import * as testController from './testController'
 import * as userManagementAdmin from './userManagementAdmin'
 export default {
   brandManagementAdmin,
   userManagementAdmin,
+  roleManagementAdmin,
   commonApi,
   basicErrorController,
   testController
