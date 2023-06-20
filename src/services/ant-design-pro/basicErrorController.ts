@@ -2,41 +2,41 @@
 /* eslint-disable */
 import { request } from '@umijs/max'
 
-/** errorHtml GET /error */
-export async function errorHtmlUsingGET(options?: { [key: string]: any }) {
-  return request<API.ModelAndView>('/error', {
+/** error GET /error */
+export async function errorUsingGET(options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/error', {
     method: 'GET',
     ...(options || {})
   })
 }
 
-/** errorHtml PUT /error */
-export async function errorHtmlUsingPUT(options?: { [key: string]: any }) {
-  return request<API.ModelAndView>('/error', {
+/** error PUT /error */
+export async function errorUsingPUT(options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/error', {
     method: 'PUT',
     ...(options || {})
   })
 }
 
-/** errorHtml POST /error */
-export async function errorHtmlUsingPOST(options?: { [key: string]: any }) {
-  return request<API.ModelAndView>('/error', {
+/** error POST /error */
+export async function errorUsingPOST(options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/error', {
     method: 'POST',
     ...(options || {})
   })
 }
 
-/** errorHtml DELETE /error */
-export async function errorHtmlUsingDELETE(options?: { [key: string]: any }) {
-  return request<API.ModelAndView>('/error', {
+/** error DELETE /error */
+export async function errorUsingDELETE(options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/error', {
     method: 'DELETE',
     ...(options || {})
   })
 }
 
-/** errorHtml PATCH /error */
-export async function errorHtmlUsingPATCH(options?: { [key: string]: any }) {
-  return request<API.ModelAndView>('/error', {
+/** error PATCH /error */
+export async function errorUsingPATCH(options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/error', {
     method: 'PATCH',
     ...(options || {})
   })

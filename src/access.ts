@@ -24,6 +24,8 @@ export default function access(
     // 角色列表的权限
     canRole: permissionList?.find((item) => item.value === 'ums:role:read'),
     canRoleSave: permissionList?.find((item) => item.value === 'ums:role:save'),
-    canRoleDelete: permissionList?.find((item) => item.value === 'ums:role:delete')
+    canRoleDelete: permissionList?.find((item) => item.value === 'ums:role:delete'),
+    // 分配角色权限
+    canRoleAssignAuth: permissionList?.find((item) => item.value === 'ums:role:assignAuth')
   }
 }

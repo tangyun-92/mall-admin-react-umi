@@ -1,12 +1,11 @@
+import { getAllPermissionListUsingGET } from '@/services/ant-design-pro/permissionManagementAdmin'
 import {
+  assignRoleAuthUsingPOST,
   deleteRoleUsingDELETE,
+  getCurrentPermissionListByRoleIdUsingGET,
   getRoleListUsingGET,
   saveRoleUsingPOST
 } from '@/services/ant-design-pro/roleManagementAdmin'
-import {
-  assignRoleUsingPOST,
-  getUserRoleListByAdminIdUsingGET
-} from '@/services/ant-design-pro/userManagementAdmin'
 import { PlusOutlined } from '@ant-design/icons'
 import {
   ActionType,
@@ -21,7 +20,7 @@ import '@umijs/max'
 import { useAccess } from '@umijs/max'
 import { Button, Drawer, message } from 'antd'
 import React, { useRef, useState } from 'react'
-import AssignRole from './components/AssignRole'
+import AssignAuth from './components/AssignAuth'
 import MyForm from './components/MyForm'
 
 // 是否品牌制造商枚举
@@ -66,11 +65,13 @@ const TableList: React.FC = () => {
   // 选中的行
   const [selectedRowsState, setSelectedRows] = useState<API.RoleListItem[]>([])
 
-  // 分配角色弹窗开关
-  const [assignRoleModalOpen, handleAssignRoleModalOpen] = useState<boolean>(false)
-  const assignRoleFormRef = useRef<any>()
-  // 当前行角色列表
-  const [currentRoleList, setCurrentRoleList] = useState<number[]>([])
+  // 分配权限弹窗开关
+  const [assignAuthModalOpen, handleAssignAuthModalOpen] = useState<boolean>(false)
+  const assignAuthFormRef = useRef<any>()
+  // 所有权限列表
+  const [allPermissionList, setAllPermissionList] = useState<API.RoleListItem[]>([])
+  // 当前角色所拥有的权限列表
+  const [currentPermissionList, setCurrentPermissionList] = useState<number[]>([])
 
   /**
    * @zh-CN 添加节点
@@ -132,17 +133,22 @@ const TableList: React.FC = () => {
   }
 
   /**
-   * 分配角色
+   * 分配权限
    */
-  async function handleAssignRole(fields: any, id: number) {
-    const hide = message.loading('正在分配角色')
+  async function handleAssignAuth(fields: any, id: number) {
+    let numList: number[] = []
+    for (const item in fields) {
+      numList = numList.concat(fields[item])
+    }
+
+    const hide = message.loading('正在分配权限')
     try {
-      await assignRoleUsingPOST({
-        adminId: id,
-        roleIds: fields.roleId.join(',') as any
+      await assignRoleAuthUsingPOST({
+        roleId: id,
+        permissionIds: numList.join(',') as any
       })
       hide()
-      message.success('分配角色成功！')
+      message.success('分配权限成功！')
       return true
     } catch (error) {
       hide()
@@ -151,17 +157,28 @@ const TableList: React.FC = () => {
   }
 
   /**
-   * 根据用户id获取角色id列表
+   * 获取所有权限列表
    */
-  async function getUserRoleListByAdminId(adminId: number | undefined) {
+  async function getAllPermissionList() {
     try {
-      const res = await getUserRoleListByAdminIdUsingGET({
-        adminId
-      })
-      const roleList = res.data?.map((item: any) => item.roleId)
-      setCurrentRoleList(roleList)
-      console.log(roleList)
+      const res = await getAllPermissionListUsingGET()
+      setAllPermissionList(res.data as any)
+      return true
+    } catch (error) {
+      return false
+    }
+  }
 
+  /**
+   * 获取当前角色所拥有的权限列表
+   */
+  async function getCurrentPermissionList(roleId: number) {
+    try {
+      const res = await getCurrentPermissionListByRoleIdUsingGET({
+        roleId
+      })
+      const permissionList = res.data?.map((item: any) => item.permissionId)
+      setCurrentPermissionList(permissionList)
       return true
     } catch (error) {
       return false
@@ -241,16 +258,19 @@ const TableList: React.FC = () => {
         ) : (
           ''
         ),
-        access.canUserAssignRole ? (
+        access.canRoleAssignAuth ? (
           <a
-            key="assignRole"
+            key="assignAuth"
             onClick={async () => {
-              getUserRoleListByAdminId(record?.id)
-              handleAssignRoleModalOpen(true)
+              getAllPermissionList()
+              if (record.id) {
+                getCurrentPermissionList(record.id)
+              }
+              handleAssignAuthModalOpen(true)
               setCurrentRow(record)
             }}
           >
-            分配角色
+            分配权限
           </a>
         ) : (
           ''
@@ -414,33 +434,32 @@ const TableList: React.FC = () => {
         )}
       </Drawer>
 
-      {/* 分配角色 */}
-      <AssignRole
-        modalOpen={assignRoleModalOpen}
-        onRef={assignRoleFormRef}
+      {/* 分配权限 */}
+      <AssignAuth
+        modalOpen={assignAuthModalOpen}
+        onRef={assignAuthFormRef}
         onOpenChange={(val) => {
-          handleAssignRoleModalOpen(val)
+          handleAssignAuthModalOpen(val)
           if (!val) {
-            if (assignRoleFormRef.current) {
-              assignRoleFormRef.current?.resetFields()
+            if (assignAuthFormRef.current) {
+              assignAuthFormRef.current?.resetFields()
               setCurrentRow(undefined)
             }
           }
         }}
         onSubmit={async (values: API.RoleListItem) => {
-          console.log(values)
-
-          const success = await handleAssignRole(values, currentRow?.id as number)
-          console.log(success)
+          const success = await handleAssignAuth(values, currentRow?.id as number)
           if (success) {
-            handleAssignRoleModalOpen(false)
+            handleAssignAuthModalOpen(false)
             if (actionRef.current) {
               actionRef.current.reload()
             }
           }
         }}
-        initialValues={currentRoleList}
-      ></AssignRole>
+        permissionList={allPermissionList}
+        currentPermissionList={currentPermissionList}
+        initialValues={[1]}
+      ></AssignAuth>
     </PageContainer>
   )
 }

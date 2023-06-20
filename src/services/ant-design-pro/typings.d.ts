@@ -1,4 +1,11 @@
 declare namespace API {
+  type assignRoleAuthUsingPOSTParams = {
+    /** permissionIds */
+    permissionIds: number[]
+    /** roleId */
+    roleId: number
+  }
+
   type assignRoleUsingPOSTParams = {
     /** adminId */
     adminId: number
@@ -34,6 +41,11 @@ declare namespace API {
     pageSize?: number
     /** 是否显示：0->不显示；1->显示 */
     showStatus?: number
+  }
+
+  type getCurrentPermissionListByRoleIdUsingGETParams = {
+    /** roleId */
+    roleId: number
   }
 
   type getPermissionListUsingGETParams = {

@@ -160,7 +160,6 @@ const TableList: React.FC = () => {
       })
       const roleList = res.data?.map((item: any) => item.roleId)
       setCurrentRoleList(roleList)
-      console.log(roleList)
 
       return true
     } catch (error) {

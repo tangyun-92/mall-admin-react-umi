@@ -63,5 +63,6 @@ declare namespace API {
     createTime: string
     status: number
     sort: number
+    children?: RoleListItem[]
   }
 }
