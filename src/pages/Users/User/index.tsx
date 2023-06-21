@@ -1,3 +1,4 @@
+import { getRoleListUsingGET } from '@/services/ant-design-pro/roleManagementAdmin'
 import {
   assignRoleUsingPOST,
   deleteUserUsingDELETE,
@@ -18,6 +19,7 @@ import {
 import '@umijs/max'
 import { useAccess } from '@umijs/max'
 import { Button, Drawer, message } from 'antd'
+import { DefaultOptionType } from 'antd/es/select'
 import React, { useRef, useState } from 'react'
 import AssignRole from './components/AssignRole'
 import MyForm from './components/MyForm'
@@ -69,6 +71,8 @@ const TableList: React.FC = () => {
   const assignRoleFormRef = useRef<any>()
   // 当前行角色列表
   const [currentRoleList, setCurrentRoleList] = useState<number[]>([])
+  // 所有角色列表
+  const [allRoleList, setAllRoleList] = useState<DefaultOptionType[]>([])
 
   /**
    * @zh-CN 添加节点
@@ -168,6 +172,24 @@ const TableList: React.FC = () => {
   }
 
   /**
+   * 获取所有的角色列表
+   */
+  async function getAllRoleList() {
+    const res = await getRoleListUsingGET({
+      pageSize: 1000,
+      current: 1
+    })
+    const list: DefaultOptionType[] = []
+    res.data?.list.forEach((item: API.RoleListItem) => {
+      list.push({
+        value: item.id,
+        label: item.name
+      })
+    })
+    setAllRoleList(list)
+  }
+
+  /**
    * @zh-CN 国际化配置
    * */
   const columns: ProColumns<API.UserListItem>[] = [
@@ -256,6 +278,7 @@ const TableList: React.FC = () => {
               getUserRoleListByAdminId(record?.id)
               handleAssignRoleModalOpen(true)
               setCurrentRow(record)
+              getAllRoleList()
             }}
           >
             分配角色
@@ -436,10 +459,7 @@ const TableList: React.FC = () => {
           }
         }}
         onSubmit={async (values: API.UserListItem) => {
-          console.log(values)
-
           const success = await handleAssignRole(values, currentRow?.id as number)
-          console.log(success)
           if (success) {
             handleAssignRoleModalOpen(false)
             if (actionRef.current) {
@@ -448,6 +468,7 @@ const TableList: React.FC = () => {
           }
         }}
         initialValues={currentRoleList}
+        allRoleList={allRoleList}
       ></AssignRole>
     </PageContainer>
   )

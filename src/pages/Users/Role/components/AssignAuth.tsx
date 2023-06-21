@@ -3,7 +3,7 @@ import { CheckboxOptionType } from 'antd'
 import { useEffect, useImperativeHandle, useState } from 'react'
 import styles from './assignAuth.less'
 
-export type AssignRoleProps = {
+export type AssignAuthProps = {
   onSubmit: (values: API.RoleListItem) => Promise<void>
   onOpenChange: (value: boolean) => void
   modalOpen: boolean
@@ -18,7 +18,7 @@ interface IFilterPermissionList {
   value: CheckboxOptionType[]
 }
 
-const AssignAuth: React.FC<AssignRoleProps> = (props) => {
+const AssignAuth: React.FC<AssignAuthProps> = (props) => {
   const [form] = ProForm.useForm()
   // 过滤后的所有权限列表
   const [filterPermissionList, setFilterPermissionList] = useState<IFilterPermissionList[]>([])

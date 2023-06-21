@@ -1,4 +1,5 @@
 import { ModalForm, ProForm, ProFormSelect } from '@ant-design/pro-components'
+import { DefaultOptionType } from 'antd/es/select'
 import { useEffect, useImperativeHandle } from 'react'
 
 export type AssignRoleProps = {
@@ -7,6 +8,7 @@ export type AssignRoleProps = {
   modalOpen: boolean
   initialValues?: number[]
   onRef: React.MutableRefObject<any>
+  allRoleList: DefaultOptionType[]
 }
 
 const AssignRole: React.FC<AssignRoleProps> = (props) => {
@@ -53,11 +55,7 @@ const AssignRole: React.FC<AssignRoleProps> = (props) => {
         placeholder={'请选择'}
         rules={[{ required: true, message: '请选择角色' }]}
         fieldProps={{
-          options: [
-            { label: '商品管理员', value: 1 },
-            { label: '订单管理员', value: 2 },
-            { label: '超级管理员', value: 5 }
-          ],
+          options: props.allRoleList,
           mode: 'multiple'
         }}
       />
