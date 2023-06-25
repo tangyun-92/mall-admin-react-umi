@@ -1,27 +1,23 @@
-import { ModalForm, ProForm, ProFormCheckbox } from '@ant-design/pro-components'
-import { CheckboxOptionType } from 'antd'
-import { useEffect, useImperativeHandle, useState } from 'react'
+import { ModalForm, ProForm } from '@ant-design/pro-components'
+import { Tree } from 'antd'
+import type { DataNode } from 'antd/es/tree'
+import React, { useEffect, useImperativeHandle, useState } from 'react'
 import styles from './assignAuth.less'
 
 export type AssignAuthProps = {
   onSubmit: (values: API.RoleListItem) => Promise<void>
   onOpenChange: (value: boolean) => void
   modalOpen: boolean
-  initialValues?: number[]
   onRef: React.MutableRefObject<any>
-  permissionList: API.RoleListItem[]
+  permissionList: DataNode[]
   currentPermissionList: number[]
-}
-interface IFilterPermissionList {
-  name: string
-  label: string
-  value: CheckboxOptionType[]
 }
 
 const AssignAuth: React.FC<AssignAuthProps> = (props) => {
   const [form] = ProForm.useForm()
-  // 过滤后的所有权限列表
-  const [filterPermissionList, setFilterPermissionList] = useState<IFilterPermissionList[]>([])
+
+  const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([])
+  const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([])
 
   /**
    * 重置表单
@@ -33,40 +29,25 @@ const AssignAuth: React.FC<AssignAuthProps> = (props) => {
   // 暴露一些方法供外部访问
   useImperativeHandle(props.onRef, () => {
     return {
-      resetFields
+      resetFields,
+      checkedKeys
     }
   })
 
-  useEffect(() => {
-    if (props.initialValues && props.initialValues.length > 0) {
-      const arr: IFilterPermissionList[] = []
-      let haveAssignObj: any = {}
-      props.permissionList.forEach((item, index) => {
-        haveAssignObj['currentPermissionList' + index] = []
-        const itemList: any = []
-        item.children?.forEach((cItem) => {
-          itemList.push({
-            label: cItem.name,
-            value: cItem.id
-          })
-          props.currentPermissionList.forEach((per) => {
-            if (per === cItem.id) {
-              haveAssignObj['currentPermissionList' + index].push(per)
-            }
-          })
-        })
-        arr.push({
-          name: 'currentPermissionList' + index,
-          label: item.name,
-          value: itemList
-        })
-      })
-      setFilterPermissionList(arr)
+  function onSelect(selectedKeysValue: React.Key[]) {
+    setSelectedKeys(selectedKeysValue)
+  }
 
-      // 已分配权限回显
-      form.setFieldsValue(haveAssignObj)
+  function onCheck(checkedKeysValue: React.Key[]) {
+    setCheckedKeys(checkedKeysValue)
+  }
+
+  useEffect(() => {
+    if (props.permissionList && props.permissionList.length > 0) {
+      // 已分配角色回显
+      setCheckedKeys(props.currentPermissionList)
     }
-  }, [props.initialValues])
+  }, [props.permissionList])
 
   return (
     <ModalForm
@@ -81,15 +62,21 @@ const AssignAuth: React.FC<AssignAuthProps> = (props) => {
       }}
       className={styles.assignRole}
     >
-      {filterPermissionList.map((item, index) =>
-        item.value.length > 0 ? (
-          <ProFormCheckbox.Group
-            key={item.name}
-            name={item.name}
-            label={item.label}
-            options={item.value}
-          />
-        ) : null
+      {props.permissionList.length > 0 && (
+        <Tree
+          checkable
+          treeData={props.permissionList}
+          fieldNames={{
+            title: 'name',
+            key: 'id',
+            children: 'children'
+          }}
+          onCheck={onCheck as any}
+          checkedKeys={checkedKeys}
+          onSelect={onSelect}
+          selectedKeys={selectedKeys}
+          defaultExpandAll={true}
+        />
       )}
     </ModalForm>
   )

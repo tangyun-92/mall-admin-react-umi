@@ -19,6 +19,7 @@ import {
 import '@umijs/max'
 import { useAccess } from '@umijs/max'
 import { Button, Drawer, message } from 'antd'
+import { DataNode } from 'antd/es/tree'
 import React, { useRef, useState } from 'react'
 import AssignAuth from './components/AssignAuth'
 import MyForm from './components/MyForm'
@@ -69,7 +70,7 @@ const TableList: React.FC = () => {
   const [assignAuthModalOpen, handleAssignAuthModalOpen] = useState<boolean>(false)
   const assignAuthFormRef = useRef<any>()
   // 所有权限列表
-  const [allPermissionList, setAllPermissionList] = useState<API.RoleListItem[]>([])
+  const [allPermissionList, setAllPermissionList] = useState<DataNode[]>([])
   // 当前角色所拥有的权限列表
   const [currentPermissionList, setCurrentPermissionList] = useState<number[]>([])
 
@@ -435,31 +436,37 @@ const TableList: React.FC = () => {
       </Drawer>
 
       {/* 分配权限 */}
-      <AssignAuth
-        modalOpen={assignAuthModalOpen}
-        onRef={assignAuthFormRef}
-        onOpenChange={(val) => {
-          handleAssignAuthModalOpen(val)
-          if (!val) {
-            if (assignAuthFormRef.current) {
-              assignAuthFormRef.current?.resetFields()
-              setCurrentRow(undefined)
+      {allPermissionList.length > 0 && (
+        <AssignAuth
+          modalOpen={assignAuthModalOpen}
+          onRef={assignAuthFormRef}
+          onOpenChange={(val) => {
+            handleAssignAuthModalOpen(val)
+            if (!val) {
+              if (assignAuthFormRef.current) {
+                assignAuthFormRef.current?.resetFields()
+                setCurrentRow(undefined)
+              }
             }
-          }
-        }}
-        onSubmit={async (values: API.RoleListItem) => {
-          const success = await handleAssignAuth(values, currentRow?.id as number)
-          if (success) {
-            handleAssignAuthModalOpen(false)
-            if (actionRef.current) {
-              actionRef.current.reload()
+          }}
+          onSubmit={async () => {
+            console.log(assignAuthFormRef.current?.checkedKeys)
+
+            const success = await handleAssignAuth(
+              assignAuthFormRef.current?.checkedKeys,
+              currentRow?.id as number
+            )
+            if (success) {
+              handleAssignAuthModalOpen(false)
+              if (actionRef.current) {
+                actionRef.current.reload()
+              }
             }
-          }
-        }}
-        permissionList={allPermissionList}
-        currentPermissionList={currentPermissionList}
-        initialValues={[1]}
-      ></AssignAuth>
+          }}
+          permissionList={allPermissionList}
+          currentPermissionList={currentPermissionList}
+        ></AssignAuth>
+      )}
     </PageContainer>
   )
 }
